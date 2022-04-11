@@ -1,0 +1,128 @@
+#!/bin/bash
+
+#COLORS
+RESTORE='\033[0m'
+
+RED='\033[00;31m'
+GREEN='\033[00;32m'
+YELLOW='\033[00;33m'
+BLUE='\033[00;34m'
+PURPLE='\033[00;35m'
+CYAN='\033[00;36m'
+LIGHTGRAY='\033[00;37m'
+
+LRED='\033[01;31m'
+LGREEN='\033[01;32m'
+LYELLOW='\033[01;33m'
+LBLUE='\033[01;34m'
+LPURPLE='\033[01;35m'
+LCYAN='\033[01;36m'
+WHITE='\033[01;37m'
+
+#BANNER
+echo -e "${LRED}\n
+\t    ____________________   ___________________    
+\t.-/|                    \ /                   |\-.
+\t||||                     |                    ||||
+\t||||  ____          _ ____              _     ||||
+\t|||| |  _ \ ___  __| | __ )  ___   ___ | | __ ||||
+\t|||| | |_) / _ \/ _\ |  _ \ / _ \ / _ \| |/ / ||||
+\t|||| |  _ <  __/ (_| | |_) | (_) | (_) |   <  ||||
+\t|||| |_| \_\___|\__,_|____/ \___/ \___/|_|\_\ ||||
+\t||||                     |                    ||||
+\t||||                     |                    ||||
+\t||||                     |                    ||||
+\t||||                     |                    ||||
+\t||||                     |          benoit.g  ||||
+\t||||                     |           cyril.d  ||||
+\t||||____  ______________ | __________________ ||||
+\t||/=====================\|/====================\||
+\t'----------------------~___~--------------------''
+${RESTORE}\n\t\tBonjour est bienvenue dans le RedBook.\n"
+
+#DISCLAIMER
+echo "Le RedBook à été créé pour un usage éthique dans le cadre de tests d'intrusion."
+echo "Le Redbook ne doit en aucun cas être utilisé afin de nuire à toute personne physique ou morale\n\n\n"
+
+#Demande de dossier projet
+echo "(1)Créer un nouveau projet"
+echo "(2)Reprendre un projet en cours"
+echo "(Q)Quitter"
+Read -p $"Choisissez une option :" option
+if [[ $option == 1 || $option == 01 ]]
+	then
+		read -p $"Nom du nouveau projet :" name_projet
+		$path="\Projets"+name_projet
+		mdir path
+elif [[ $option == 2 || $option == 02 ]]
+        then
+		ls -l
+		read -p $"Nom du projet à continuer :" name_projet
+		$path="\Projets"+name_projet
+elif [[ $option == Q || $option == q ]]
+	then
+		exit 1
+
+else
+	echo "vous n'avez pas choisi une option valable"
+fi
+
+
+scan(){
+
+echo "(1)Nmap classique"
+echo "(2)Nmap avec OS"
+echo "(3)Retour Menu"
+
+read -p $"Choisisssez une option:" option
+
+if [[ $option == 1 ]]
+        then
+		read -p $"quelle adresse IP ? :" IP
+		nmap $IP
+		sleep 5
+		menu
+elif [[ $option == 2 ]]
+        then
+		read -p $"quelle adresse IP ? :" IP
+		nmap -v -O -T4 -Pn -oG OSDetect  $IP
+		sleep 5
+		menu
+elif [[ $option == 3 ]]
+        then
+                menu
+
+
+else
+        echo "vous n'avez pas choisi une option valable"
+        scan
+fi
+}
+
+
+
+
+
+menu(){
+
+echo "(1) Nmap"
+echo "(2) Quitter"
+
+read -p $"Bonjour, choisisssez une option:" option
+
+
+if [[ $option == 1 || $option == 02 ]]
+	then
+		scan
+		menu
+elif [[ $option == 2 || $option == 02 ]]
+	then
+		exit 1
+
+else
+	echo "vous n'avez pas choisi une option valable"
+	menu
+fi
+}
+
+menu
