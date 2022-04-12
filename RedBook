@@ -24,32 +24,7 @@ UL='\033[4m'    # underline
 
 
 
-#BANNER
-banner(){
-echo -e "${LRED}
-\t    ____________________   ___________________    
-\t.-/|                    \ /                   |\-.
-\t||||                     |                    ||||
-\t||||  ____          _ ____              _     ||||
-\t|||| |  _ \ ___  __| | __ )  ___   ___ | | __ ||||
-\t|||| | |_) / _ \/ _\ |  _ \ / _ \ / _ \| |/ / ||||
-\t|||| |  _ <  __/ (_| | |_) | (_) | (_) |   <  ||||
-\t|||| |_| \_\___|\__,_|____/ \___/ \___/|_|\_\ ||||
-\t||||                     |                    ||||
-\t||||                     |                    ||||
-\t||||                     |                    ||||
-\t||||                     |                    ||||
-\t||||                     |          benoit.g  ||||
-\t||||                     |           cyril.d  ||||
-\t||||____  ______________ | __________________ ||||
-\t||/=====================\|/====================\||
-\t'----------------------~___~--------------------''
-${RESTORE}\n\t\tBonjour et bienvenue dans le ${LRED}RedBook${RESTORE}\n"
 
-#DISCLAIMER
-echo -e "Le ${LRED}RedBook${RESTORE} à été créé pour un usage éthique dans le cadre de tests d'intrusion"
-echo -e "Le ${LRED}Redbook${RESTORE} ne doit en aucun cas être utilisé afin de nuire à toute personne physique ou morale\n\n\n"
-}
 
 
 
@@ -87,8 +62,10 @@ fi
 
 
 
-
+#Menu 2
 menu_main(){
+clear
+banner
 echo -e "Vous travaillez actuellement sur le projet : ${LBLUE}$name_projet${RESTORE}\n"
 echo -e "Menu principal et actions possibles dans le ${LRED}RedBook${RESTORE}:\n"
 echo -e "$WHITE(${LRED}1$WHITE)${RESTORE}Nmap"
@@ -106,12 +83,12 @@ elif [[ $option == Q || $option == q ]]
 
 else
 	echo "vous n'avez pas choisi une option valable"
-	menu
+	menu_main
 fi
 }
 
-#START
-#Demande de dossier projet
+
+#Menu 1
 menu_start(){
 echo -e "$WHITE(${LRED}1$WHITE)${RESTORE}Créer un nouveau projet"
 echo -e "$WHITE(${LRED}2$WHITE)${RESTORE}Reprendre un projet en cours"
@@ -124,8 +101,6 @@ if [[ $option == 1 ]]
 		mkdir Projets/$name_projet
 		$projet = "Projets/"+$name_projet
 		echo $projet
-		clear
-		banner
 		menu_main
 elif [[ $option == 2 ]]		
         then
@@ -134,8 +109,6 @@ elif [[ $option == 2 ]]
 		echo -e "\n"
 		read -p $"Nom du projet à continuer :" name_projet
 #		$projet = "Projets/"+ $name_projet
-		clear
-		banner
 		menu_main
 elif [[ $option == Q || $option == q ]]
 	then
@@ -149,7 +122,35 @@ else
 	menu_start
 fi
 }
-#clear screen + banner + menu start
+
+#BANNER
+banner(){
+echo -e "${LRED}
+\t    ____________________   ___________________    
+\t.-/|                    \ /                   |\-.
+\t||||                     |                    ||||
+\t||||  ____          _ ____              _     ||||
+\t|||| |  _ \ ___  __| | __ )  ___   ___ | | __ ||||
+\t|||| | |_) / _ \/ _\ |  _ \ / _ \ / _ \| |/ / ||||
+\t|||| |  _ <  __/ (_| | |_) | (_) | (_) |   <  ||||
+\t|||| |_| \_\___|\__,_|____/ \___/ \___/|_|\_\ ||||
+\t||||                     |                    ||||
+\t||||                     |                    ||||
+\t||||                     |                    ||||
+\t||||                     |                    ||||
+\t||||                     |          benoit.g  ||||
+\t||||                     |           cyril.d  ||||
+\t||||____  ______________ | __________________ ||||
+\t||/=====================\|/====================\||
+\t'----------------------~___~--------------------''
+${RESTORE}\n\t\tBonjour et bienvenue dans le ${LRED}RedBook${RESTORE}\n"
+
+#DISCLAIMER
+echo -e "Le ${LRED}RedBook${RESTORE} à été créé pour un usage éthique dans le cadre de tests d'intrusion"
+echo -e "Le ${LRED}Redbook${RESTORE} ne doit en aucun cas être utilisé afin de nuire à toute personne physique ou morale\n\n\n"
+}
+
+#START
 clear
 banner
 menu_start
