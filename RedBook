@@ -27,12 +27,11 @@ UL='\033[4m'    # underline
 
 
 
-
-scan(){
-
-echo -e "$WHITE(${LRED}1$WHITE)${RESTORE}Nmap classique"
-echo -e "(${LRED}2)Nmap avec OS"
-echo -e "(${LRED}3)Retour Menu"
+#Menu Nmap
+menu_nmap(){
+echo -e "${LRED}(1)${RESTORE} Nmap classique"
+echo -e "${LRED}(2)${RESTORE} Nmap avec OS"
+echo -e "\n${LRED}(3)${RESTORE} Retour Menu\n\n"
 
 read -p $"Choisisssez une option:" option
 
@@ -59,60 +58,68 @@ else
 fi
 }
 
-
-
-
-#Menu 2
+#Menu Principal
 menu_main(){
 clear
 banner
-echo -e "Vous travaillez actuellement sur le projet : ${LBLUE}$name_projet${RESTORE}\n"
-echo -e "Menu principal et actions possibles dans le ${LRED}RedBook${RESTORE}:\n"
-echo -e "$WHITE(${LRED}1$WHITE)${RESTORE}Nmap"
-echo -e "$WHITE(${LRED}Q$WHITE)${RESTORE}Quitter"
+echo -e "Vous travaillez actuellement sur le projet ${LBLUE}$name_projet${RESTORE}\n"
+echo -e "Menu principal et actions possibles dans le ${LRED}RedBook${RESTORE}\n"
+echo -e "${LRED}(1)${RESTORE} Nmap"
+echo -e "\n${LRED}(Q)${RESTORE} Quitter\n\n"
 
 read -p $"Choisisssez une option:" option
 
-
-if [[ $option == 1 ]]
-	then
-		scan
-elif [[ $option == Q || $option == q ]]
-	then
-		exit 1
-
+if [[ $option == 1 ]]; then
+	menu_nmap
+elif [[ $option == Q || $option == q ]]; then
+	exit 1
 else
 	echo "vous n'avez pas choisi une option valable"
 	menu_main
 fi
 }
 
-
-#Menu 1
+#MENU Dossier
 menu_start(){
-echo -e "$WHITE(${LRED}1$WHITE)${RESTORE}Créer un nouveau projet"
-echo -e "$WHITE(${LRED}2$WHITE)${RESTORE}Reprendre un projet en cours"
-echo -e "$WHITE(${LRED}Q$WHITE)${RESTORE}Quitter\n"
 
-read -p $"Choisissez une option :" option
-if [[ $option == 1 ]]
-	then
+if [[ ! -d Projets ]]; then
+	mkdir Projets
+else
+	i="2"
+fi
+
+echo -e "${LRED}(1)${RESTORE} Créer un nouveau projet"
+echo -e "${LRED}(2)${RESTORE} Reprendre un projet en cours"
+echo -e "\n${LRED}(Q)${RESTORE} Quitter\n\n"
+
+read -p "Choisissez une option :" option
+
+if [[ $option == 1 ]]; then
+	read -p $"Nom du nouveau projet :" name_projet
+	projet="Projets/"$name_projet
+	while [[ -d $projet ]]; do
+		echo -e "Le projet ${LBLUE}$name_projet${RESTORE} existe déjà.\n"
 		read -p $"Nom du nouveau projet :" name_projet
-		mkdir Projets/$name_projet
-		$projet = "Projets/"+$name_projet
-		echo $projet
-		menu_main
-elif [[ $option == 2 ]]		
-        then
-		echo -e "\n${UL}Voici les projets en cours${RESTORE}"
-		ls Projets
-		echo -e "\n"
+		projet="Projets/"$name_projet
+	done
+	mkdir $projet
+	menu_main
+
+elif [[ $option == 2 ]]; then
+	echo -e "\n${UL}Voici les projets en cours${RESTORE}\n"
+	ls Projets
+	echo -e "\n"
+	read -p $"Nom du projet à continuer :" name_projet
+	projet="Projets/"$name_projet
+	while [[ ! -d $projet ]]; do
+		echo -e "Le projet ${LBLUE}$name_projet${RESTORE} n'existe pas.\n"
 		read -p $"Nom du projet à continuer :" name_projet
-#		$projet = "Projets/"+ $name_projet
-		menu_main
-elif [[ $option == Q || $option == q ]]
-	then
-		exit 1
+		projet="Projets/"$name_projet
+	done
+	menu_main
+
+elif [[ $option == Q || $option == q ]]; then
+	exit 1
 
 else
 	echo -e "\nVous n'avez pas choisi une option valable"
@@ -144,8 +151,6 @@ echo -e "${LRED}
 \t||/=====================\|/====================\||
 \t'----------------------~___~--------------------''
 ${RESTORE}\n\t\tBonjour et bienvenue dans le ${LRED}RedBook${RESTORE}\n"
-
-#DISCLAIMER
 echo -e "Le ${LRED}RedBook${RESTORE} à été créé pour un usage éthique dans le cadre de tests d'intrusion"
 echo -e "Le ${LRED}Redbook${RESTORE} ne doit en aucun cas être utilisé afin de nuire à toute personne physique ou morale\n\n\n"
 }
