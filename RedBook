@@ -84,8 +84,6 @@ menu_start(){
 
 if [[ ! -d Projets ]]; then
 	mkdir Projets
-else
-	i="2"
 fi
 
 echo -e "${LRED}(1)${RESTORE} Créer un nouveau projet"
@@ -122,7 +120,7 @@ elif [[ $option == Q || $option == q ]]; then
 	exit 1
 
 else
-	echo -e "\nVous n'avez pas choisi une option valable"
+	echo -e "\n${LYELLOW}ATTENTION vous n'avez pas choisi une option valable${RESTORE}\n\nRetour au menu..."
 	sleep 5
 	clear
 	banner
