@@ -24,37 +24,102 @@ UL='\033[4m'    # underline
 
 
 
-
-
+#command nmap custom
+command_nmapcustom(){
+echo -e "Vous avez choisi de faire un Nmap personalisé\n"
+rm -f nmapcustom
+touch nmapcustom
+chmod +x nmapcustom
+#cible
+read -p "Indiquer votre cible : " target
+echo "nmap $target" | tr -d "\n" >> nmapcustom
+#scan technique
+read -p "Scan technique ? (syn/ack/udp - default=syn) : " scantechnique
+#METTRE LA LIGNE DU TRUC PAR DEFAUT
+while [[ $scantechnique != syn || $scantechnique != ack || $scantechnique != udp ]]; do
+	echo "/!\ Option invalide !"
+	read -p "Scan technique ? (syn/ack/udp - default=syn) : " scantechnique
+	#METTRE LA LIGNE DU TRUC PAR DEFAUT
+done
+if [[ $scantechnique == syn ]]; then
+	echo " -sS" | tr -d "\n" >> nmapcustom
+elif [[ $scantechnique == ack ]]; then
+	echo " -sA" | tr -d "\n" >> nmapcustom
+elif [[ $scantechnique == udp ]]; then
+	echo " -sU" | tr -d "\n" >> nmapcustom
+fi
+#scan services
+read -p "Scan services ? (yes/no - default=no) : " scanservice
+#METTRE LA LIGNE DU TRUC PAR DEFAUT
+while [[ $scanservice != yes || $scanservice != y || $scanservice != no || $scanservice != n ]]; do
+	echo "/!\ Option invalide !"
+	read -p "Scan services ? (yes/no - default=no) : " scanservice
+	#METTRE LA LIGNE DU TRUC PAR DEFAUT
+done
+if [[ $scanservice == y || $scanservice == yes ]]; then 
+	echo " -sV -version-all" | tr -d "\n" >> nmapcustom
+fi
+#scan OS
+read -p "Scan operating system (yes/no - default=n) : " scanos
+while [[ $scanos != yes || $scanos != y || $scanos != no || $scanos != n ]]; do
+	echo "/!\ Option invalide !"
+	read -p "Scan operating system (yes/no - default=n) : " scanos
+	#METTRE LA LIGNE DU TRUC PAR DEFAUT
+done
+if [[ $scanos == y || $scanos == yes ]]; then
+	echo " -O" | tr -d "\n" >> nmapcustom
+fi
+#scan script NSE
+read -p "Use default scripts NSE (yes/no - default= no) " scannse
+while [[ $scannse != yes || $scannse != y || $scannse != no || $scannse != n ]]; do
+	echo "/!\ Option invalide !"
+	read -p "Use default scripts NSE (yes/no - default= no) " scannse
+	#METTRE LA LIGNE DU TRUC PAR DEFAUT
+done
+if [[ $scannnse == y || $scannse == yes ]]; then
+	echo " -sC" >> nmapcustom
+fi
+#output
+filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
+echo " -oA $filename" >> nmapcustom
+#nmap
+./nmapcustom
+rm -f nmapcustom
+echo -e "\n"
+read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
+menu_main
+}
 
 #Menu Nmap
 menu_nmap(){
-echo -e "${LRED}(1)${RESTORE} Nmap classique"
-echo -e "${LRED}(2)${RESTORE} Nmap avec OS"
-echo -e "\n${LRED}(3)${RESTORE} Retour Menu\n\n"
+echo -e "${LRED}(1)${RESTORE} Nmap Classique"
+echo -e "${LRED}(2)${RESTORE} Nmap Full"
+echo -e "${LRED}(3)${RESTORE} Nmap Custom"
+echo -e "\n${LRED}(0)${RESTORE} Retour Menu\n\n"
 
 read -p $"Choisisssez une option:" option
 
-if [[ $option == 1 ]]
-        then
-		read -p $"quelle adresse IP ? :" IP
-		nmap $IP
-		sleep 5
-		menu
-elif [[ $option == 2 ]]
-        then
-		read -p $"quelle adresse IP ? :" IP
-		nmap -v -O -T4 -Pn -oG OSDetect  $IP
-		sleep 5
-		menu
-elif [[ $option == 3 ]]
-        then
-                menu
-
-
+if [[ $option == 1 ]]; then
+	read -p $"Indiquer votre cible : " target
+	filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
+	nmap $target -oA $filename
+	echo -e "\n"
+	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal"
+	menu_main
+elif [[ $option == 2 ]]; then
+	read -p $"Indiquer votre cible : " target
+	filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
+	nmap $target -T4 -A -oA $filename
+	echo -e "\n"
+	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
+	menu_main
+elif [[ $option == 3 ]]; then
+	command_nmapcustom
+elif [[ $option == 0 ]]; then
+	menu_main
 else
-        echo "vous n'avez pas choisi une option valable"
-        scan
+        echo -e "${LYELLOW}Vous n'avez pas choisi une option valable${RESTORE}\n"
+        menu_nmap
 fi
 }
 
@@ -79,9 +144,17 @@ else
 fi
 }
 
-#MENU Dossier
+#MENU Start: choix dossier
 menu_start(){
 
+#check ROOT
+if [[ "$(id -u)" != 0 ]]; then
+	echo -e "${LYELLOW}/!\ Ce programme doit être lancé en root !${RESTORE}\n"
+	read -n 1 -s -r -p "Appuyer sur une touche pour quitter "
+	exit 1
+fi
+#ajout de la timezone Paris
+timedatectl set-timezone Europe/Paris
 if [[ ! -d Projets ]]; then
 	mkdir Projets
 fi
@@ -101,6 +174,7 @@ if [[ $option == 1 ]]; then
 		projet="Projets/"$name_projet
 	done
 	mkdir $projet
+	cd $projet
 	menu_main
 
 elif [[ $option == 2 ]]; then
@@ -110,17 +184,18 @@ elif [[ $option == 2 ]]; then
 	read -p $"Nom du projet à continuer :" name_projet
 	projet="Projets/"$name_projet
 	while [[ ! -d $projet ]]; do
-		echo -e "Le projet ${LBLUE}$name_projet${RESTORE} n'existe pas.\n"
+		echo -e "${LYELLOW}/!\ Le projet ${LBLUE}$name_projet${LYELLOW} n'existe pas.${RESTORE}\n"
 		read -p $"Nom du projet à continuer :" name_projet
 		projet="Projets/"$name_projet
 	done
+	cd $projet
 	menu_main
 
 elif [[ $option == Q || $option == q ]]; then
 	exit 1
 
 else
-	echo -e "\n${LYELLOW}ATTENTION vous n'avez pas choisi une option valable${RESTORE}\n\nRetour au menu..."
+	echo -e "\n${LYELLOW}/!\ ATTENTION vous n'avez pas choisi une option valable${RESTORE}\n\nRetour au menu..."
 	sleep 5
 	clear
 	banner
