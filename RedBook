@@ -131,7 +131,8 @@ if [[ $option == 1 ]]; then
 	read -p $"Indiquer votre cible : " target
 	echo -e "\n"
 	filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
-	nmap $target -oA $filename
+	nmap $target -oX $filename
+	xsltproc $filename -o $filename
 	echo -e "\n"
 	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
 	menu_main
@@ -207,7 +208,7 @@ if [[ $option == 1 ]]; then
 	read -p "Nom du nouveau projet : " name_projet
 	projet="Projets/"$name_projet
 	while [[ -d $projet ]]; do
-		echo -e "${LYELLOW}/!\ Le projet ${LBLUE}$name_projet${LYELLOW} existe déjà{RESTORE}\n"
+		echo -e "${LYELLOW}/!\ Le projet ${LBLUE}$name_projet${LYELLOW} existe déjà${RESTORE}\n"
 		read -p $"Nom du nouveau projet : " name_projet
 		projet="Projets/"$name_projet
 	done
