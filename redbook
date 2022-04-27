@@ -1,0 +1,283 @@
+#!/bin/bash
+
+#COLORS
+RESTORE='\033[0m'
+
+LRED='\033[01;31m'
+LGREEN='\033[01;32m'
+LYELLOW='\033[01;33m'
+LBLUE='\033[01;34m'
+LPURPLE='\033[01;35m'
+LCYAN='\033[01;36m'
+
+UL='\033[4m'    # underline
+
+
+
+
+command_nmapcustom(){
+rm -f nmapcustom
+touch nmapcustom
+chmod +x nmapcustom
+echo ""
+#cible
+read -p "Indiquer votre cible : " target
+echo "nmap $target" | tr -d "\n" >> nmapcustom
+#scan technique
+read -p "Scan technique ? (syn/ack/udp - default=syn) : " scantechnique
+#METTRE LA LIGNE DU TRUC PAR DEFAUT
+while [[ TRUE ]]; do
+	if [[ $scantechnique == syn ]]; then
+		echo " -sS" | tr -d "\n" >> nmapcustom
+		break
+	elif [[ $scantechnique == ack ]]; then
+		echo " -sA" | tr -d "\n" >> nmapcustom
+		break
+	elif [[ $scantechnique == udp ]]; then
+		echo " -sU" | tr -d "\n" >> nmapcustom
+		break
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p "Scan technique ? (syn/ack/udp - default=syn) : " scantechnique
+		#METTRE LA LIGNE DU TRUC PAR DEFAUT
+	fi
+done
+#ports
+read -p "Specific Port ? (yes/no - default=no) : " port
+#METTRE LA LIGNE DU TRUC PAR DEFAUT
+while [[ TRUE ]]; do
+	if [[ $port == yes || $port == y ]]; then
+		read -p "Starting Port : " startport
+		read -p "Ending Port : " endport
+		while [[ $endport < $startport ]]; do
+			echo -e "${LYELLOW} /!\ Le port de fin est inferieur au port de départ ${RESTORE}"
+			read -p "Ending Port : " endport
+		done
+		echo " -p $startport-$endport" | tr -d "\n" >> nmapcustom
+		break
+	elif [[ $port == no || $port == n ]]; then 
+		break
+	else
+		echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p "Specific Port ? (yes/no - default=no) : " port
+		#METTRE LA LIGNE DU TRUC PAR DEFAUT
+	fi
+done
+#scan services
+read -p "Scan services ? (yes/no - default=no) : " scanservice
+#METTRE LA LIGNE DU TRUC PAR DEFAUT
+while [[ TRUE ]]; do
+	if [[ $scanservice == yes || $scanservice == y ]]; then
+		echo " -sV -version-all" | tr -d "\n" >> nmapcustom
+		break
+	elif [[ $scanservice == no || $scanservice == n ]]; then 
+		break
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p "Scan services ? (yes/no - default=no) : " scanservice
+		#METTRE LA LIGNE DU TRUC PAR DEFAUT
+	fi
+done
+#scan OS
+read -p "Scan operating system (yes/no - default=n) : " scanos
+while [[ TRUE ]]; do
+	if [[ $scanos == yes || $scanos == y ]]; then
+		echo " -O" | tr -d "\n" >> nmapcustom
+		break
+	elif [[ $scanos == no || $scanos == n ]]; then 
+		break
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p "Scan operating system ? (yes/no - default=no) : " scanos
+		#METTRE LA LIGNE DU TRUC PAR DEFAUT
+	fi
+done
+#scan script NSE
+read -p "Use default scripts NSE (yes/no - default= no) " scannse
+while [[ TRUE ]]; do
+	if [[ $scannse == yes || $scannse == y ]]; then
+		echo " -sC" | tr -d "\n" >> nmapcustom
+		break
+	elif [[ $scannse == no || $scannse == n ]]; then 
+		break
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p "Use default scripts NSE ? (yes/no - default=no) : " scannse
+		#METTRE LA LIGNE DU TRUC PAR DEFAUT
+	fi
+done
+#output
+filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
+echo " -oX $filename" | tr -d "\n" >> nmapcustom
+#nmap
+echo -e "\n"
+./nmapcustom
+xsltproc $filename -o $filename
+rm -f nmapcustom
+echo -e "\n"
+read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
+menu_main
+}
+
+menu_nmap(){
+clear
+echo -e "-----${LRED} NMAP MENU ${RESTORE}-----"
+echo -e "${LRED}(1)${RESTORE} Nmap Classique"
+echo -e "${LRED}(2)${RESTORE} Nmap Full"
+echo -e "${LRED}(3)${RESTORE} Nmap Custom"
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $"Choisisssez une option : " option
+if [[ $option == 1 ]]; then
+	read -p $"Indiquer votre cible : " target
+	echo -e "\n"
+	filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
+	nmap $target -oX $filename
+	xsltproc $filename -o $filename
+	echo -e "\n"
+	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
+	menu_main
+elif [[ $option == 2 ]]; then
+	read -p $"Indiquer votre cible : " target
+	echo -e "\n"
+	filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
+	nmap $target -T4 -A -oX $filename
+	xsltproc $filename -o $filename
+	echo -e "\n"
+	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
+	menu_main
+elif [[ $option == 3 ]]; then
+	command_nmapcustom
+elif [[ $option == 0 ]]; then
+	menu_main
+elif [[ $option == Q || $option == q ]]; then
+	clear
+	exit 1
+else
+	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
+	sleep 2
+	menu_nmap
+fi
+}
+
+menu_main(){
+clear
+banner
+echo -e "Vous travaillez actuellement sur le projet ${LBLUE}$name_projet${RESTORE}\n"
+echo -e "Actions possibles dans le ${LRED}RedBook${RESTORE}\n"
+echo -e "${LRED}(1)${RESTORE} Nmap"
+echo -e "${LRED}(2)${RESTORE} SQLmap"
+echo -e "${LRED}(3)${RESTORE} DNSrecon"
+echo -e "\n${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $"Choisisssez une option:" option
+if [[ $option == 1 ]]; then
+	menu_nmap
+elif [[ $option == 2 ]]; then
+	clear
+	sqlmap --wizard
+	echo ""
+	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
+	menu_main
+elif [[ $option == 3 ]]; then
+	read -p "Indiquer votre cible : " target
+	clear
+	filename="DNSenum_"$target"_"$(date +%F)"_"$(date +%T)
+	dnsrecon -d $target --csv $filename
+	mv /usr/share/dnsrecon 
+	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
+	menu_main
+elif [[ $option == Q || $option == q ]]; then
+	clear
+	exit 1
+else
+	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
+	sleep 2
+	menu_main
+fi
+}
+
+menu_start(){
+#check root
+if [[ "$(id -u)" != 0 ]]; then
+	echo -e "${LYELLOW}/!\ Ce programme doit être lancé en root !${RESTORE}\n"
+	read -n 1 -s -r -p "Appuyer sur une touche pour quitter "
+	clear
+	exit 1
+fi
+#timezone Paris
+timedatectl set-timezone Europe/Paris
+redbookpath=$(find / -name "RedBook" 2>/dev/null)
+cd $redbookpath
+#creation dossier principal
+if [[ ! -d Projets ]]; then 
+	mkdir Projets
+fi
+#choix options
+echo -e "${LRED}(1)${RESTORE} Créer un nouveau projet"
+echo -e "${LRED}(2)${RESTORE} Reprendre un projet en cours"
+echo -e "\n${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p "Choisissez une option : " option
+if [[ $option == 1 ]]; then
+	read -p "Nom du nouveau projet : " name_projet
+	projet="Projets/"$name_projet
+	while [[ -d $projet ]]; do
+		echo -e "${LYELLOW}/!\ Le projet ${LBLUE}$name_projet${LYELLOW} existe déjà${RESTORE}\n"
+		read -p $"Nom du nouveau projet : " name_projet
+		projet="Projets/"$name_projet
+	done
+	mkdir $projet
+	cd $projet
+	menu_main
+elif [[ $option == 2 ]]; then
+	echo -e "\n${UL}Voici les projets en cours${RESTORE}\n"
+	ls Projets
+	echo ""
+	read -p $"Nom du projet à continuer  : " name_projet
+	projet="Projets/"$name_projet
+	while [[ ! -d $projet ]]; do
+		echo -e "${LYELLOW}/!\ Le projet ${LBLUE}$name_projet${LYELLOW} n'existe pas${RESTORE}\n"
+		read -p $"Nom du projet à continuer : " name_projet
+		projet="Projets/"$name_projet
+	done
+	cd $projet
+	menu_main
+elif [[ $option == Q || $option == q ]]; then
+	clear
+	exit 1
+else
+	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
+	sleep 2
+	clear
+	banner
+	menu_start
+fi
+}
+
+banner(){
+echo -e "${LRED}
+\t    ____________________   ___________________    
+\t.-/|                    \ /                   |\-.
+\t||||                     |                    ||||
+\t||||  ____          _ ____              _     ||||
+\t|||| |  _ \ ___  __| | __ )  ___   ___ | | __ ||||
+\t|||| | |_) / _ \/ _\ |  _ \ / _ \ / _ \| |/ / ||||
+\t|||| |  _ <  __/ (_| | |_) | (_) | (_) |   <  ||||
+\t|||| |_| \_\___|\__,_|____/ \___/ \___/|_|\_\ ||||
+\t||||                     |                    ||||
+\t||||                     |                    ||||
+\t||||                     |                    ||||
+\t||||                     |                    ||||
+\t||||                     |          benoit.g  ||||
+\t||||                     |           cyril.d  ||||
+\t||||____  ______________ | __________________ ||||
+\t||/=====================\|/====================\||
+\t'----------------------~___~--------------------''
+${RESTORE}\n\t\tBonjour et bienvenue dans le ${LRED}RedBook${RESTORE}\n"
+echo -e "Le ${LRED}RedBook${RESTORE} à été créé pour un usage éthique dans le cadre de tests d'intrusion"
+echo -e "Le ${LRED}Redbook${RESTORE} ne doit en aucun cas être utilisé afin de nuire à toute personne physique ou morale\n\n\n"
+}
+
+#START
+clear
+banner
+menu_start
