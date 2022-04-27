@@ -23,6 +23,42 @@ echo ""
 #cible
 read -p "Indiquer votre cible : " target
 echo "nmap $target" | tr -d "\n" >> nmapcustom
+#timing and perf
+echo "0 = Paranoid	Intrusion Detection System evasion"
+echo "1 = Sneaky	Intrusion Detection System evasion"
+echo "2 = Polite	slows down the scan to use less bandwidth and use less target machine resources"
+echo "3 = Normal	which is default speed"
+echo "4 = Aggressive	speeds scans; assumes you are on a reasonably fast and reliable network"
+echo "5 = Insane	speeds scan; assumes you are on an extraordinarily fast network"
+read -p "Timing & Performance ? (0/1/2/3/4/5 - default=3) : " scantimingandperf
+default_scantimingandperfe="3"
+scantimingandperf="${scantimingandperf:-${default_scantimingandperf}}"
+while [[ TRUE ]]; do
+	if [[ $scantimingandperf == 0 ]]; then
+		echo " -T0" | tr -d "\n" >> nmapcustom
+		break
+	elif [[ $scantimingandperf == 1 ]]; then
+		echo " -T1" | tr -d "\n" >> nmapcustom
+		break
+	elif [[ $scantimingandperf == 2 ]]; then
+		echo " -T2" | tr -d "\n" >> nmapcustom
+		break
+	elif [[ $scantimingandperf == 3 ]]; then
+		echo " -T3" | tr -d "\n" >> nmapcustom
+		break
+	elif [[ $scantimingandperf == 4 ]]; then
+		echo " -T4" | tr -d "\n" >> nmapcustom
+		break
+	elif [[ $scantimingandperf == 5 ]]; then
+		echo " -T5" | tr -d "\n" >> nmapcustom
+		break
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p "Timing & Performance ? (0/1/2/3/4/5 - default=3) : " scantimingandperf
+		default_scantimingandperfe="3"
+		scantimingandperf="${scantimingandperf:-${default_scantimingandperf}}"
+	fi
+done
 #scan technique
 read -p "Scan technique ? (syn/ack/udp - default=syn) : " scantechnique
 default_scantechnique="syn"
@@ -136,7 +172,8 @@ clear
 echo -e "-----${LRED} NMAP MENU ${RESTORE}-----"
 echo -e "${LRED}(1)${RESTORE} Nmap Classique"
 echo -e "${LRED}(2)${RESTORE} Nmap Full"
-echo -e "${LRED}(3)${RESTORE} Nmap Custom"
+echo -e "${LRED}(3)${RESTORE} Nmap IDS Evasion"
+echo -e "${LRED}(4)${RESTORE} Nmap Custom"
 echo -e "\n${LRED}(0)${RESTORE} Menu principal"
 echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
 read -p $"Choisisssez une option : " option
@@ -144,7 +181,7 @@ if [[ $option == 1 ]]; then
 	read -p $"Indiquer votre cible : " target
 	echo -e "\n"
 	filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
-	nmap $target -oX $filename
+	nmap -v $target -oX $filename
 	xsltproc $filename -o $filename
 	echo -e "\n"
 	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
@@ -159,6 +196,15 @@ elif [[ $option == 2 ]]; then
 	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
 	menu_main
 elif [[ $option == 3 ]]; then
+	read -p $"Indiquer votre cible : " target
+	echo -e "\n"
+	filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
+	nmap $target -v -f -T0 -n -Pn --data-length 200 -oX $filename
+	xsltproc $filename -o $filename
+	echo -e "\n"
+	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
+	menu_main
+elif [[ $option == 4 ]]; then
 	command_nmapcustom
 elif [[ $option == 0 ]]; then
 	menu_main
