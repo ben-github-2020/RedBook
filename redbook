@@ -12,26 +12,23 @@ LCYAN='\033[01;36m'
 
 UL='\033[4m'    # underline
 
-
-
-
 command_nmapcustom(){
 rm -f nmapcustom
 touch nmapcustom
 chmod +x nmapcustom
 echo ""
 #cible
-read -p "Indiquer votre cible : " target
+read -p "[*] Indiquer votre cible : " target
 echo "nmap $target" | tr -d "\n" >> nmapcustom
 #timing and perf
-echo "0 = Paranoid	Intrusion Detection System evasion"
-echo "1 = Sneaky	Intrusion Detection System evasion"
-echo "2 = Polite	slows down the scan to use less bandwidth and use less target machine resources"
-echo "3 = Normal	which is default speed"
-echo "4 = Aggressive	speeds scans; assumes you are on a reasonably fast and reliable network"
-echo "5 = Insane	speeds scan; assumes you are on an extraordinarily fast network"
-read -p "Timing & Performance ? (0/1/2/3/4/5 - default=3) : " scantimingandperf
-default_scantimingandperfe="3"
+echo -e "\n0 = Paranoid	Intrusion Detection System evasion"
+echo -e "1 = Sneaky	Intrusion Detection System evasion"
+echo -e "2 = Polite	slows down the scan to use less bandwidth and use less target machine resources"
+echo -e "3 = Normal	which is default speed"
+echo -e "4 = Aggressive	speeds scans; assumes you are on a reasonably fast and reliable network"
+echo -e "5 = Insane	speeds scan; assumes you are on an extraordinarily fast network"
+read -p "[*] Timing & Performance ? (0/1/2/3/4/5 - default=3) : " scantimingandperf
+default_scantimingandperf="3"
 scantimingandperf="${scantimingandperf:-${default_scantimingandperf}}"
 while [[ TRUE ]]; do
 	if [[ $scantimingandperf == 0 ]]; then
@@ -54,13 +51,13 @@ while [[ TRUE ]]; do
 		break
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
-		read -p "Timing & Performance ? (0/1/2/3/4/5 - default=3) : " scantimingandperf
+		read -p "[*] Timing & Performance ? (0/1/2/3/4/5 - default=3) : " scantimingandperf
 		default_scantimingandperfe="3"
 		scantimingandperf="${scantimingandperf:-${default_scantimingandperf}}"
 	fi
 done
 #scan technique
-read -p "Scan technique ? (syn/ack/udp - default=syn) : " scantechnique
+read -p "[*] Scan technique ? (syn/ack/udp - default=syn) : " scantechnique
 default_scantechnique="syn"
 scantechnique="${scantechnique:-${default_scantechnique}}"
 while [[ TRUE ]]; do
@@ -75,22 +72,22 @@ while [[ TRUE ]]; do
 		break
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
-		read -p "Scan technique ? (syn/ack/udp - default=syn) : " scantechnique
+		read -p "[*] Scan technique ? (syn/ack/udp - default=syn) : " scantechnique
 		default_scantechnique="syn"
 		scantechnique="${scantechnique:-${default_scantechnique}}"
 	fi
 done
 #ports
-read -p "Specific Port ? (yes/no - default=no) : " port
+read -p "[*] Specific Port ? (yes/no - default=no) : " port
 default_port="no"
 port="${port:-${default_port}}"
 while [[ TRUE ]]; do
 	if [[ $port == yes || $port == y ]]; then
-		read -p "Starting Port : " startport
-		read -p "Ending Port : " endport
+		read -p "[*] Starting Port : " startport
+		read -p "[*] Ending Port : " endport
 		while [[ $endport < $startport ]]; do
 			echo -e "${LYELLOW} /!\ Le port de fin est inferieur au port de départ ${RESTORE}"
-			read -p "Ending Port : " endport
+			read -p "[*] Ending Port : " endport
 		done
 		echo " -p $startport-$endport" | tr -d "\n" >> nmapcustom
 		break
@@ -98,13 +95,13 @@ while [[ TRUE ]]; do
 		break
 	else
 		echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
-		read -p "Specific Port ? (yes/no - default=no) : " port
+		read -p "[*] Specific Port ? (yes/no - default=no) : " port
 		default_port="no"
 		port="${port:-${default_port}}"
 	fi
 done
 #scan services
-read -p "Scan services ? (yes/no - default=no) : " scanservice
+read -p "[*] Scan services ? (yes/no - default=no) : " scanservice
 default_scanservice="no"
 scanservice="${scanservice:-${default_scanservice}}"
 while [[ TRUE ]]; do
@@ -115,13 +112,13 @@ while [[ TRUE ]]; do
 		break
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
-		read -p "Scan services ? (yes/no - default=no) : " scanservice
+		read -p "[*] Scan services ? (yes/no - default=no) : " scanservice
 		default_scanservice="no"
 		scanservice="${scanservice:-${default_scanservice}}"
 	fi
 done
 #scan OS
-read -p "Scan operating system (yes/no - default=no) : " scanos
+read -p "[*] Scan operating system (yes/no - default=no) : " scanos
 default_scanos="no"
 scanos="${scanos:-${default_scanos}}"
 while [[ TRUE ]]; do
@@ -132,13 +129,13 @@ while [[ TRUE ]]; do
 		break
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
-		read -p "Scan operating system ? (yes/no - default=no) : " scanos
+		read -p "[*] Scan operating system ? (yes/no - default=no) : " scanos
 		default_scanos="no"
 		scanos="${scanos:-${default_scanos}}"
 	fi
 done
 #scan script NSE
-read -p "Use default scripts NSE (yes/no - default= no) " scannse
+read -p "[*] Use default scripts NSE (yes/no - default= no) " scannse
 default_scannse="no"
 scannse="${scannse:-${default_scannse}}"
 while [[ TRUE ]]; do
@@ -149,7 +146,7 @@ while [[ TRUE ]]; do
 		break
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
-		read -p "Use default scripts NSE ? (yes/no - default=no) : " scannse
+		read -p "[*] Use default scripts NSE ? (yes/no - default=no) : " scannse
 		default_scannse="no"
 		scannse="${scannse:-${default_scannse}}"
 	fi
@@ -162,9 +159,79 @@ echo -e "\n"
 ./nmapcustom
 xsltproc $filename -o $filename
 rm -f nmapcustom
-echo -e "\n"
+echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
 menu_main
+}
+
+menu_nikto(){
+clear
+echo -e "-----${LRED} NIKTO ${RESTORE}-----"
+echo -e "${LRED}(1)${RESTORE}Installer Nikto"
+echo -e "${LRED}(2)${RESTORE}Désinstaller Nikto"
+echo -e "${LRED}(3)${RESTORE}Modifier les parametres proxy"
+echo -e "${LRED}(4)${RESTORE}Renitialiser les parametres proxy\n"
+echo -e "${LRED}(5)${RESTORE}Simple scan" 
+echo -e "${LRED}(6)${RESTORE}Custom scan" 
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p "Choisisssez une option:" option
+
+if [[ $option == 1 ]]; then
+	echo -e "Installation de Nikto en cours ..."
+	dpkg --configure -a
+	sudo apt-get install nikto 2> /dev/nul
+	echo -e "\n\n${LRED}[*]${RESTORE} Nikto a été installé correctement"
+	echo -e "Retour au menu..."
+	sleep 5
+	menu_nikto
+elif [[ $option == 2 ]]; then
+	apt-get remove nikto -y
+	echo -e "\n${LRED}[*]${RESTORE} Nikto a bien été désinstallé"
+	echo -e "Retour au menu..."
+	sleep 5
+	menu_nikto	
+elif [[ $option == 3 ]]; then
+    read -p "[*] PROXY HOST (Url ou l’IP du serveur proxy) ? : " PHOST
+	read -p "[*] PROXY PORT (Port du proxy) ? : " PPORT
+    read -p "[*] PROXY USER (Utilisateur si besoin) ? : " PUSER
+	read -p "[*] PROXY PASS (Mot de passe de l’utilisateur si besoin) ? : " PPASS
+    sed -i 's/^#*PROXYHOST=.*/PROXYHOST='"${PHOST}"'/' /etc/nikto.conf	
+	sed -i 's/^#*PROXYPORT=.*/PROXYPORT='"${PPORT}"'/' /etc/nikto.conf	
+	sed -i 's/^#*PROXYUSER=.*/PROXYUSER='"${PUSER}"'/' /etc/nikto.conf	
+    sed -i 's/^#*PROXYPASS=.*/PROXYPASS='"${PPASS}"'/' /etc/nikto.conf	
+	echo -e "\n${LRED}[*]${RESTORE} Les paramètres proxy ont été mis à jour"
+	echo -e "Retour au menu..."
+    sleep 5
+	menu_nikto
+elif [[ $option == 4 ]]; then
+	sed -i 's/^#PROXYHOST=./#PROXYHOST='"127.0.0.1"'/' /etc/nikto.conf
+	sed -i 's/^#PROXYPORT=./#PROXYPORT='"8080"'/' /etc/nikto.conf
+	sed -i 's/^#PROXYUSER=./#PROXYUSER='"proxyuserid"'/' /etc/nikto.conf
+	sed -i 's/^#PROXYPASS=./#PROXYPASS='"proxypassword"'/' /etc/nikto.conf
+	echo -e "\n${LRED}[*]${RESTORE} Les paramètres proxy ont été réinitialisé"
+	echo -e "Retour au menu..."
+	sleep 5
+	menu_nikto
+elif [[ $option == 5 ]]; then
+    read -p "[*]  Target url ? :" target 
+	filename="Nikto_"$target"_"$(date +%F)"_"$(date +%T)
+    nikto -h $target -F htm -o $filename
+	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+	read -n 1 -s -r -p " Appuyer sur une touche pour retourner au menu principal"
+	menu_main
+elif [[ $option == 6 ]]; then
+	command_niktocustom
+elif [[ $option == 0 ]]; then
+	menu_main
+elif [[ $option == Q || $option == q ]]; then
+	clear
+	exit 1
+else
+	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
+	sleep 2
+	menu_nikto
+fi
 }
 
 menu_nmap(){
@@ -183,7 +250,7 @@ if [[ $option == 1 ]]; then
 	filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
 	nmap -v $target -oX $filename
 	xsltproc $filename -o $filename
-	echo -e "\n"
+	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
 	menu_main
 elif [[ $option == 2 ]]; then
@@ -192,7 +259,7 @@ elif [[ $option == 2 ]]; then
 	filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
 	nmap $target -T4 -A -oX $filename
 	xsltproc $filename -o $filename
-	echo -e "\n"
+	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
 	menu_main
 elif [[ $option == 3 ]]; then
@@ -201,7 +268,7 @@ elif [[ $option == 3 ]]; then
 	filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
 	nmap $target -v -f -T0 -n -Pn --data-length 200 -oX $filename
 	xsltproc $filename -o $filename
-	echo -e "\n"
+	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
 	menu_main
 elif [[ $option == 4 ]]; then
@@ -226,6 +293,7 @@ echo -e "Actions possibles dans le ${LRED}RedBook${RESTORE}\n"
 echo -e "${LRED}(1)${RESTORE} Nmap"
 echo -e "${LRED}(2)${RESTORE} SQLmap"
 echo -e "${LRED}(3)${RESTORE} DNSrecon"
+echo -e "${LRED}(4)${RESTORE} Nikto"
 echo -e "\n${LRED}(Q)${RESTORE} Quitter\n\n"
 read -p $"Choisisssez une option:" option
 if [[ $option == 1 ]]; then
@@ -237,12 +305,14 @@ elif [[ $option == 2 ]]; then
 	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
 	menu_main
 elif [[ $option == 3 ]]; then
-	read -p "Indiquer votre cible : " target
+	read -p "[*] Indiquer votre cible : " target
 	clear
 	filename="DNSenum_"$target"_"$(date +%F)"_"$(date +%T)
 	dnsrecon -d $target --csv "$redbookpath/$projet/$filename.csv"
 	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
 	menu_main
+elif [[ $option == 4 ]]; then
+	menu_nikto
 elif [[ $option == Q || $option == q ]]; then
 	clear
 	exit 1
