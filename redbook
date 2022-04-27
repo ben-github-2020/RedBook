@@ -12,6 +12,62 @@ LCYAN='\033[01;36m'
 
 UL='\033[4m'    # underline
 
+command_niktocustom(){
+clear
+rm -f niktocustom
+touch niktocustom
+chmod +x niktocustom
+echo ""
+#cible
+read -p "Target URL : " target
+echo "nikto -h $target" | tr -d "\n" >> niktocustom
+#port
+read -p "Target port (80,443,... - default=80) : " port
+default_port="80"
+port="${port:-${default_port}}"
+re="^[0-9]+$|^[0-9]+([,][0-9]+)+$"
+while [[ TRUE ]]; do
+	if [[ $port =~ $re ]]; then
+		echo " -p $port" | tr -d "\n" >> niktocustom
+		break
+	else
+		echo -e "${LYELLOW}/!\ Erreur : ce n'est pas un nombre !${RESTORE}"
+		read -p "Target port (80,443,... - default=80) : " port
+		default_port="80"
+		port="${port:-${default_port}}"
+	fi
+done
+
+#proxy
+read -p "Voulez vous effectuer un scan avec proxy ? (yes/no - default=no) : " proxy
+default_proxy="no"
+proxy="${proxy:-${default_proxy}}"
+while [[ TRUE ]]; do
+	if [[ $proxy == yes || $proxy == y ]]; then
+		echo " -useproxy" | tr -d "\n" >> niktocustom
+		break
+	elif [[ $proxy == no || $proxy == n ]]; then
+		break
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p "Voulez vous effectuer un scan avec proxy ? (yes/no - default=no) : " proxy
+		default_proxy="no"
+		proxy="${proxy:-${default_proxy}}"
+	fi
+done
+
+#output
+filename="Nikto_"$target"_"$(date +%F)"_"$(date +%T)
+echo " -F htm -o $filename" | tr -d "\n" >> niktocustom
+#nikto
+echo -e "\n"
+./niktocustom
+rm -f niktocustom
+echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
+menu_main
+}
+
 command_nmapcustom(){
 rm -f nmapcustom
 touch nmapcustom
