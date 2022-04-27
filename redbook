@@ -25,7 +25,8 @@ read -p "Indiquer votre cible : " target
 echo "nmap $target" | tr -d "\n" >> nmapcustom
 #scan technique
 read -p "Scan technique ? (syn/ack/udp - default=syn) : " scantechnique
-#METTRE LA LIGNE DU TRUC PAR DEFAUT
+default_scantechnique="syn"
+scantechnique="${scantechnique:-${default_scantechnique}}"
 while [[ TRUE ]]; do
 	if [[ $scantechnique == syn ]]; then
 		echo " -sS" | tr -d "\n" >> nmapcustom
@@ -39,12 +40,14 @@ while [[ TRUE ]]; do
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
 		read -p "Scan technique ? (syn/ack/udp - default=syn) : " scantechnique
-		#METTRE LA LIGNE DU TRUC PAR DEFAUT
+		default_scantechnique="syn"
+		scantechnique="${scantechnique:-${default_scantechnique}}"
 	fi
 done
 #ports
 read -p "Specific Port ? (yes/no - default=no) : " port
-#METTRE LA LIGNE DU TRUC PAR DEFAUT
+default_port="no"
+port="${port:-${default_port}}"
 while [[ TRUE ]]; do
 	if [[ $port == yes || $port == y ]]; then
 		read -p "Starting Port : " startport
@@ -60,12 +63,14 @@ while [[ TRUE ]]; do
 	else
 		echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
 		read -p "Specific Port ? (yes/no - default=no) : " port
-		#METTRE LA LIGNE DU TRUC PAR DEFAUT
+		default_port="no"
+		port="${port:-${default_port}}"
 	fi
 done
 #scan services
 read -p "Scan services ? (yes/no - default=no) : " scanservice
-#METTRE LA LIGNE DU TRUC PAR DEFAUT
+default_scanservice="no"
+scanservice="${scanservice:-${default_scanservice}}"
 while [[ TRUE ]]; do
 	if [[ $scanservice == yes || $scanservice == y ]]; then
 		echo " -sV -version-all" | tr -d "\n" >> nmapcustom
@@ -75,11 +80,14 @@ while [[ TRUE ]]; do
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
 		read -p "Scan services ? (yes/no - default=no) : " scanservice
-		#METTRE LA LIGNE DU TRUC PAR DEFAUT
+		default_scanservice="no"
+		scanservice="${scanservice:-${default_scanservice}}"
 	fi
 done
 #scan OS
-read -p "Scan operating system (yes/no - default=n) : " scanos
+read -p "Scan operating system (yes/no - default=no) : " scanos
+default_scanos="no"
+scanos="${scanos:-${default_scanos}}"
 while [[ TRUE ]]; do
 	if [[ $scanos == yes || $scanos == y ]]; then
 		echo " -O" | tr -d "\n" >> nmapcustom
@@ -89,11 +97,14 @@ while [[ TRUE ]]; do
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
 		read -p "Scan operating system ? (yes/no - default=no) : " scanos
-		#METTRE LA LIGNE DU TRUC PAR DEFAUT
+		default_scanos="no"
+		scanos="${scanos:-${default_scanos}}"
 	fi
 done
 #scan script NSE
 read -p "Use default scripts NSE (yes/no - default= no) " scannse
+default_scannse="no"
+scannse="${scannse:-${default_scannse}}"
 while [[ TRUE ]]; do
 	if [[ $scannse == yes || $scannse == y ]]; then
 		echo " -sC" | tr -d "\n" >> nmapcustom
@@ -103,7 +114,8 @@ while [[ TRUE ]]; do
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
 		read -p "Use default scripts NSE ? (yes/no - default=no) : " scannse
-		#METTRE LA LIGNE DU TRUC PAR DEFAUT
+		default_scannse="no"
+		scannse="${scannse:-${default_scannse}}"
 	fi
 done
 #output
@@ -182,8 +194,7 @@ elif [[ $option == 3 ]]; then
 	read -p "Indiquer votre cible : " target
 	clear
 	filename="DNSenum_"$target"_"$(date +%F)"_"$(date +%T)
-	dnsrecon -d $target --csv $filename
-	mv /usr/share/dnsrecon 
+	dnsrecon -d $target --csv "$redbookpath/$projet/$filename.csv"
 	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
 	menu_main
 elif [[ $option == Q || $option == q ]]; then
@@ -206,6 +217,7 @@ if [[ "$(id -u)" != 0 ]]; then
 fi
 #timezone Paris
 timedatectl set-timezone Europe/Paris
+#path main dossier
 redbookpath=$(find / -name "RedBook" 2>/dev/null)
 cd $redbookpath
 #creation dossier principal
