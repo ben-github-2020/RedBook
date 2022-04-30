@@ -137,20 +137,37 @@ done
 read -p "[*] Specific Port ? (yes/no - default=no) : " port
 default_port="no"
 port="${port:-${default_port}}"
+quitloop="no"
 while [[ TRUE ]]; do
-	if [[ $port == yes || $port == y ]]; then
-		read -p "[*] Starting Port : " startport
-		read -p "[*] Ending Port : " endport
-		while [[ $endport < $startport ]]; do
-			echo -e "${LYELLOW} /!\ Le port de fin est inferieur au port de départ ${RESTORE}"
-			read -p "[*] Ending Port : " endport
-		done
-		echo " -p $startport-$endport" | tr -d "\n" >> nmapcustom
+	if [[ $quitloop == yes ]]; then
 		break
+	elif [[ $port == yes || $port == y ]]; then
+		read -p "[*] Starting Port : " startport
+		re="^[0-9]+$"
+		while ! [[ $startport =~ $re ]]; do
+			echo -e "${LYELLOW}/!\ Invalide: uniquement un nombre ${RESTORE}"
+			read -p "[*] Starting Port : " startport
+		done
+		read -p "[*] Ending Port : " endport
+		while [[ TRUE ]]; do
+			if [[ $endport =~ $re ]]; then
+				if [[ $endport > $startport ]];then
+					echo " -p $startport-$endport" | tr -d "\n" >> nmapcustom
+					quitloop="yes"
+					break
+				else
+					echo -e "${LYELLOW} /!\ Le port de fin est inferieur au port de départ ${RESTORE}"
+					read -p "[*] Ending Port : " endport
+				fi
+			else	
+				echo -e "${LYELLOW}/!\ Invalide: uniquement un nombre ${RESTORE}"
+				read -p "[*] Ending Port : " endport
+			fi
+		done
 	elif [[ $port == no || $port == n ]]; then 
 		break
 	else
-		echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
 		read -p "[*] Specific Port ? (yes/no - default=no) : " port
 		default_port="no"
 		port="${port:-${default_port}}"
