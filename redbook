@@ -237,15 +237,72 @@ read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
 menu_main
 }
 
+menu_dnsrecon(){
+clear
+echo -e "-------------------------"
+echo -e "-----${LRED} DNSRECON MENU ${RESTORE}-----"
+echo -e "-------------------------"
+echo -e "${LRED}(1)${RESTORE} Standard Record Enumeration"
+echo -e "${LRED}(2)${RESTORE} Zone Transfer"
+echo -e "${LRED}(3)${RESTORE} Zone walking"
+echo -e "${LRED}(4)${RESTORE} Domain brute force enumeration"
+echo -e "${LRED}(5)${RESTORE} Full scan" 
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+
+read -p "Choisisssez une option:" option
+
+if [[ $option == 1 ]]; then
+    read -p "[*]  Indiquer votre cible :" target 
+	filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
+    dnsrecon -d $target --csv "$redbookpath/$projet/$filename.csv"
+	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+	read -n 1 -s -r -p " Appuyer sur une touche pour retourner au menu principal"
+	menu_main
+elif [[ $option == 2 ]]; then
+    read -p "[*]  Indiquer votre cible :" target 
+	filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
+    dnsrecon -d $target -t axfr --csv "$redbookpath/$projet/$filename.csv"
+	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+	read -n 1 -s -r -p " Appuyer sur une touche pour retourner au menu principal"
+	menu_main
+elif [[ $option == 3 ]]; then
+    read -p "[*]  Indiquer votre cible :" target 
+	filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
+    dnsrecon -d $target -t zonewalk --csv "$redbookpath/$projet/$filename.csv"
+	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+	read -n 1 -s -r -p " Appuyer sur une touche pour retourner au menu principal"
+	menu_main
+elif [[ $option == 4 ]]; then
+    read -p "[*]  Indiquer votre cible :" target 
+	filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
+    dnsrecon -d $target -t brt --csv "$redbookpath/$projet/$filename.csv"
+	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+	read -n 1 -s -r -p " Appuyer sur une touche pour retourner au menu principal"
+	menu_main
+elif [[ $option == 0 ]]; then
+	menu_main
+elif [[ $option == Q || $option == q ]]; then
+	clear
+	exit 1
+else
+	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
+	sleep 2
+	menu_dnsrecon
+fi
+}
+
 menu_nikto(){
 clear
-echo -e "-----${LRED} NIKTO ${RESTORE}-----"
-echo -e "${LRED}(1)${RESTORE}Installer Nikto"
-echo -e "${LRED}(2)${RESTORE}Désinstaller Nikto"
-echo -e "${LRED}(3)${RESTORE}Modifier les parametres proxy"
-echo -e "${LRED}(4)${RESTORE}Renitialiser les parametres proxy\n"
-echo -e "${LRED}(5)${RESTORE}Simple scan" 
-echo -e "${LRED}(6)${RESTORE}Custom scan" 
+echo -e "----------------------"
+echo -e "-----${LRED} NIKTO MENU ${RESTORE}-----"
+echo -e "----------------------"
+echo -e "${LRED}(1)${RESTORE} Installer Nikto"
+echo -e "${LRED}(2)${RESTORE} Désinstaller Nikto"
+echo -e "${LRED}(3)${RESTORE} Modifier les parametres proxy"
+echo -e "${LRED}(4)${RESTORE} Renitialiser les parametres proxy\n"
+echo -e "${LRED}(5)${RESTORE} Simple scan" 
+echo -e "${LRED}(6)${RESTORE} Custom scan" 
 echo -e "\n${LRED}(0)${RESTORE} Menu principal"
 echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
 read -p "Choisisssez une option:" option
@@ -309,7 +366,9 @@ fi
 
 menu_nmap(){
 clear
+echo -e "---------------------"
 echo -e "-----${LRED} NMAP MENU ${RESTORE}-----"
+echo -e "---------------------"
 echo -e "${LRED}(1)${RESTORE} Nmap Classique"
 echo -e "${LRED}(2)${RESTORE} Nmap Full"
 echo -e "${LRED}(3)${RESTORE} Nmap IDS Evasion"
@@ -378,12 +437,7 @@ elif [[ $option == 2 ]]; then
 	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
 	menu_main
 elif [[ $option == 3 ]]; then
-	read -p "[*] Indiquer votre cible : " target
-	clear
-	filename="DNSenum_"$target"_"$(date +%F)"_"$(date +%T)
-	dnsrecon -d $target --csv "$redbookpath/$projet/$filename.csv"
-	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
-	menu_main
+	menu_dnsrecon
 elif [[ $option == 4 ]]; then
 	menu_nikto
 elif [[ $option == Q || $option == q ]]; then
