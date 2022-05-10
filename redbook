@@ -12,6 +12,14 @@ LCYAN='\033[01;36m'
 
 UL='\033[4m'    # underline
 
+command_googledorks(){
+read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+bash $redbookpath/outils/reconnaissance/dorkscan/FGDS.sh $target
+sleep 5
+read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+menu_main
+}
+
 command_niktocustom(){
 clear
 rm -f niktocustom
@@ -31,7 +39,7 @@ while [[ TRUE ]]; do
 		echo " -p $port" | tr -d "\n" >> niktocustom
 		break
 	else
-		echo -e "${LYELLOW}/!\ Erreur : ce n'est pas un nombre !${RESTORE}"
+		echo -e "${LYELLOW}/!\ Erreur : nombres uniquement !${RESTORE}"
 		read -p "Target port (80,443,... - default=80) : " port
 		default_port="80"
 		port="${port:-${default_port}}"
@@ -237,6 +245,248 @@ read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
 menu_main
 }
 
+command_mail(){
+read -p $'\e[0;31m[*]\e[0m Check e-mail: ' email
+checkmail=$(curl -s https://api.2ip.me/email.txt?email=$email | grep -o 'true\|false')
+if [[ $checkmail == 'true' ]]; then
+	echo -e "${LGREEN} e-mail valide !${RESTORE}"
+	read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal'
+	menu_main
+elif [[ $checkmail == 'false' ]]; then
+	echo -e "${LRED} e-mail invalide !${RESTORE}"
+	read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal'
+	menu_main
+fi
+}
+
+command_phone(){
+
+if [[ -e phoneinfo.txt ]]; then
+rm -rf phoneinfo.txt
+fi
+
+read -p $'\e[1;92m[*] Phone (e.g.: 14158586273): \e[0m' phone
+
+getphone=$(curl -s "apilayer.net/api/validate?access_key=43fc2577cf1cdb2eb522583eaee6ae8f&number='$phone'&country_code=&format=1" -L > phoneinfo.txt)
+
+valid=$(grep -o 'valid\":true' phoneinfo.txt )
+if [[ $valid == *'valid":true'* ]]; then
+
+
+country=$(grep 'country_name\":\"' phoneinfo.txt | cut -d ":" -f2 | tr -d ',' | tr -d '\"')
+location=$(grep 'location\":\"' phoneinfo.txt | cut -d ":" -f2 | tr -d ',' | tr -d '\"')
+carrier=$(grep 'carrier\":\"' phoneinfo.txt | cut -d ":" -f2 | tr -d ',' | tr -d '\"')
+line_type=$(grep 'line_type\":\"' phoneinfo.txt | cut -d ":" -f2 | tr -d ',' | tr -d '\"')
+IFS=$'\n'
+printf "\e[1;92m[*] Country:\e[0m\e[1;77m %s\e[0m\n" $country
+printf "\e[1;92m[*] Location:\e[0m\e[1;77m %s\e[0m\n" $location
+printf "\e[1;92m[*] Carrier:\e[0m\e[1;77m %s\e[0m\n" $carrier
+printf "\e[1;92m[*] Line Type:\e[0m\e[1;77m %s\e[0m\n" $line_type
+
+echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+menu_main
+
+else
+printf "\e[1;93m[!] Request invalid!\e[0m\n"
+command_phone
+fi
+}
+
+command_spidershell(){
+clear
+echo -e "${LRED}╔═╗┌─┐┬┌┬┐┌─┐┬─┐  ╔═╗┬ ┬┌─┐┬  ┬ ${RESTORE}"  
+echo -e "${LRED}╚═╗├─┘│ ││├┤ ├┬┘  ╚═╗├─┤├┤ │  │ ${RESTORE}"  
+echo -e "${LCYAN}╚═╝┴  ┴─┴┘└─┘┴└─  ╚═╝┴ ┴└─┘┴─┘┴─┘${RESTORE}"
+echo -e "\n"
+counter=0
+turn=0
+default_crawl="0"
+default_threads="10"
+read -p $'\e[0;31m[*]\e[0m Site to start spider: ' site
+read -p $'\e[0;31m[*]\e[0m Crawl Depth (Default '$default_crawl'): ' crawl
+crawl="${crawl:-${default_crawl}}"
+read -p $'\e[0;31m[*]\e[0m Threads (Default '$default_threads'): ' threads
+threads="${threads:-${default_threads}}"
+
+printf "\e[101m[*] Spider Shell is \e[5mrunning\e[25m, please wait... \e[0m \n"
+start="$(date -u +%s)"
+wget --no-check-certificate -q $site -O - | tr "\t\r\n'" '   "' | grep -i -o '<a[^>]\+href[ ]*=[ \t]*"\(ht\|f\)tps\?:[^"]\+"' | sed -e 's/^.*"\([^"]\+\)".*$/\1/g' > spider.url.$turn
+let counter++
+
+function spider() {
+let turn++
+cat spider.url.$((turn-1)) | xargs -P $threads -I % wget --no-check-certificate -q % -O - | tr "\t\r\n'" '   "' | grep -i -o '<a[^>]\+href[ ]*=[ \t]*"\(ht\|f\)tps\?:[^"]\+"' | sed -e 's/^.*"\([^"]\+\)".*$/\1/g' >> spider.url.$turn
+}
+while [[ "$crawl" -gt "$counter" ]]; do
+  spider
+  let counter++
+done
+end="$(date -u +%s)"
+duration="$(($end-$start))"
+cat spider.url* | uniq > "Spider_"$site"_"$(date +%F)"_"$(date +%T)".txt"
+rm -rf spider.url*
+printf "\e[1;77mTime Elapsed: $duration seconds \e[0m \n"
+echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+menu_main
+}
+
+command_theHarvester(){
+read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+read -p $'\e[0;31m[*]\e[0m Indiquer la limite du nombre de résultats de recherche : ' result
+cat <<-EOF
+
+		${RED}[${WHITE}::${RED}]${ORANGE} Selectionner votre source de recherche ${RED}[${WHITE}::${RED}]${ORANGE}
+
+${RED}[${WHITE}01${RED}]${ORANGE} Anubis     		${RED}[${WHITE}14${RED}]${ORANGE} Google       			${RED}[${WHITE}27${RED}]${ORANGE} Rocketreach
+${RED}[${WHITE}02${RED}]${ORANGE} Baidu     			${RED}[${WHITE}15${RED}]${ORANGE} Hackertarget    			${RED}[${WHITE}28${RED}]${ORANGE} SecurityTrails
+${RED}[${WHITE}03${RED}]${ORANGE} Bing       		${RED}[${WHITE}16${RED}]${ORANGE} Hunter     			${RED}[${WHITE}29${RED}]${ORANGE} Spyse
+${RED}[${WHITE}04${RED}]${ORANGE} Binaryedge 		${RED}[${WHITE}17${RED}]${ORANGE} Intelx     			${RED}[${WHITE}30${RED}]${ORANGE} Sublist3r	
+${RED}[${WHITE}05${RED}]${ORANGE} Bingapi    		${RED}[${WHITE}18${RED}]${ORANGE} Iinkedin        			${RED}[${WHITE}31${RED}]${ORANGE} Threatcrowd		
+${RED}[${WHITE}06${RED}]${ORANGE} Bufferoverun  		${RED}[${WHITE}19${RED}]${ORANGE} Iinkedin_links    			${RED}[${WHITE}32${RED}]${ORANGE} Threatminer
+${RED}[${WHITE}07${RED}]${ORANGE} Censys        		${RED}[${WHITE}20${RED}]${ORANGE} N45ht   				${RED}[${WHITE}33${RED}]${ORANGE} Trello			
+${RED}[${WHITE}08${RED}]${ORANGE} Certspotter   		${RED}[${WHITE}21${RED}]${ORANGE} Omnisint     			${RED}[${WHITE}34${RED}]${ORANGE} Twitter
+${RED}[${WHITE}09${RED}]${ORANGE} Crtsh   			${RED}[${WHITE}22${RED}]${ORANGE} Otx       				${RED}[${WHITE}35${RED}]${ORANGE} Urlscan
+${RED}[${WHITE}10${RED}]${ORANGE} Dnsdumpster   		${RED}[${WHITE}23${RED}]${ORANGE} Pentesttools      			${RED}[${WHITE}36${RED}]${ORANGE} Virustotal
+${RED}[${WHITE}11${RED}]${ORANGE} Duckduckgo    		${RED}[${WHITE}24${RED}]${ORANGE} Projectdiscovery  			${RED}[${WHITE}37${RED}]${ORANGE} Yahoo
+${RED}[${WHITE}12${RED}]${ORANGE} Fullhunt			${RED}[${WHITE}25${RED}]${ORANGE} Qwant	   			${RED}[${WHITE}38${RED}]${ORANGE} Zoomeye
+${RED}[${WHITE}13${RED}]${ORANGE} Github-code		${RED}[${WHITE}26${RED}]${ORANGE} Rapiddns	   			${RED}[${WHITE}39${RED}]${ORANGE} All
+		
+	EOF
+	
+read -p $'\e[0;31m[*]\e[0m Choisissez une option parmis les sources de recherche ci-dessus : ' option
+while [[ TRUE ]]; do	
+		
+	if [[ $option == 1 || $option == 01 ]]; then
+		theHarvester -d $target -l $result -b anubis -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 2 || $option == 02 ]]; then
+		theHarvester -d $target -l $result -b baidu -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 3 || $option == 03 ]]; then
+		theHarvester -d $target -l $result -b bing -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 4 || $option == 04 ]]; then
+		theHarvester -d $target -l $result -b binaryedge -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 5 || $option == 05 ]]; then
+		theHarvester -d $target -l $result -b bingapi -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 6 || $option == 06 ]]; then
+		theHarvester -d $target -l $result -b bufferoverun -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 7 || $option == 07 ]]; then
+		theHarvester -d $target -l $result -b censys -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 8 || $option == 08 ]]; then
+		theHarvester -d $target -l $result -b certspotter -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 9 || $option == 09 ]]; then
+		theHarvester -d $target -l $result -b crtsh -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 10 ]]; then
+		theHarvester -d $target -l $result -b dnsdumpster -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 11 ]]; then
+		theHarvester -d $target -l $result -b duckduckgo -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 12 ]]; then
+		theHarvester -d $target -l $result -b fullhunt -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 13 ]]; then
+		theHarvester -d $target -l $result -b github-code -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 14 ]]; then
+		theHarvester -d $target -l $result -b google -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 15 ]]; then              
+		theHarvester -d $target -l $result -b hackertarget -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 16 ]]; then              
+		theHarvester -d $target -l $result -b hunter -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 17 ]]; then              
+		theHarvester -d $target -l $result -b intelx -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 18 ]]; then              
+		theHarvester -d $target -l $result -b linkedin -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 19 ]]; then              
+		theHarvester -d $target -l $result -b linkedin_links -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 20 ]]; then              
+		theHarvester -d $target -l $result -b n45ht -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 21 ]]; then              
+		theHarvester -d $target -l $result -b omnisint -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 22 ]]; then              
+		theHarvester -d $target -l $result -b otx -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 23 ]]; then              
+		theHarvester -d $target -l $result -b pentesttools -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 24 ]]; then              
+		theHarvester -d $target -l $result -b projectdiscovery -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 25 ]]; then              
+		theHarvester -d $target -l $result -b qwant -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 26 ]]; then              
+		theHarvester -d $target -l $result -b rapiddns -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 27 ]]; then              
+		theHarvester -d $target -l $result -b rocketreach -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 28 ]]; then              
+		theHarvester -d $target -l $result -b securityTrails -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 29 ]]; then              
+		theHarvester -d $target -l $result -b spyse -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 30 ]]; then              
+		theHarvester -d $target -l $result -b sublist3r -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 31 ]]; then              
+		theHarvester -d $target -l $result -b threatcrowd -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 32 ]]; then              
+		theHarvester -d $target -l $result -b threatminer -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 33 ]]; then              
+		theHarvester -d $target -l $result -b trello -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 34 ]]; then              
+		theHarvester -d $target -l $result -b twitter -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 35 ]]; then              
+		theHarvester -d $target -l $result -b urlscan -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 36 ]]; then              
+		theHarvester -d $target -l $result -b virustotal -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 37 ]]; then              
+		theHarvester -d $target -l $result -b yahoo -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		break
+	elif [[ $option == 38 ]]; then
+		theHarvester -d $target -l $result -b zoomeye -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)	
+		break
+	elif [[ $option == 39 ]]; then
+		theHarvester -d $target -l $result -b all -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)	
+		break
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisissez une option parmis les sources de recherche ci-dessus : ' option
+		
+	fi
+done	
+echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+menu_main
+}
+
+
 menu_dnsrecon(){
 clear
 echo -e "-------------------------"
@@ -277,6 +527,13 @@ elif [[ $option == 4 ]]; then
     read -p "[*]  Indiquer votre cible :" target 
 	filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
     dnsrecon -d $target -t brt --csv "$redbookpath/$projet/$filename.csv"
+	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+	read -n 1 -s -r -p " Appuyer sur une touche pour retourner au menu principal"
+	menu_main
+elif [[ $option == 5 ]]; then
+    read -p "[*]  Indiquer votre cible :" target 
+	filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
+    dnsrecon -d $target -azkyb --csv "$redbookpath/$projet/$filename.csv"
 	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 	read -n 1 -s -r -p " Appuyer sur une touche pour retourner au menu principal"
 	menu_main
@@ -417,29 +674,416 @@ else
 fi
 }
 
+
+
+
+
+
+menu_blueteam(){
+
+clear
+echo -e "------------------------------------------------------------"
+echo -e "	 -----${LRED} BLUETEAM MENU ${RESTORE}-----"
+echo -e "------------------------------------------------------------"
+echo -e "\n"
+echo -e "${LRED}(1)${RESTORE} Autopsy "
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
+if [[ $option == 1 ]]; then
+	autopsy
+elif [[ $option == 0 ]]; then
+	menu_main	
+elif [[ $option == Q || $option == q ]]; then
+	clear
+	exit 1	
+else
+	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
+	sleep 2
+	menu_main
+fi	
+}
+
+menu_tor(){
+
+clear
+echo -e "----------------------"
+echo -e " -----${LRED} TOR MENU ${RESTORE}-----"
+echo -e "----------------------"
+echo -e "\n"
+echo -e "${LRED}(1)${RESTORE} Installer TOR"
+echo -e "${LRED}(2)${RESTORE} Désinstaller TOR"
+echo -e "${LRED}(3)${RESTORE} Block Tor"
+echo -e "${LRED}(4)${RESTORE} Anonymisation Tor"
+echo -e "${LRED}(5)${RESTORE} Quelle est mon adresse ip ?"
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
+
+if [[ $option == 1 ]]; then
+	echo -e "${LRED}[*]${RESTORE} Installation de TOR en cours ..."
+	apt-get install tor -y
+	echo -e "\n\n${LRED}[*]${RESTORE} TOR a été installé correctement"
+	echo -e "Retour au menu..."
+	sleep 5
+	menu_tor
+elif [[ $option == 2 ]]; then
+	apt -y remove tor
+	echo -e "\n${LRED}[*]${RESTORE} TOR a bien été désinstallé"
+	echo -e "Retour au menu..."
+	sleep 5
+	menu_tor
+elif [[ $option == 3 ]]; then
+	command_blocktor
+elif [[ $option == 4 ]]; then
+	command_anontor	
+elif [[ $option == 5 ]]; then
+	adrip=$(wget -qO- icanhazip.com)
+	echo -e "\n${LRED}[]${RESTORE} Votre adresse ip est : ${LBLUE} $adrip ${RESTORE} \n"
+	read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu Tor'
+	menu_tor
+elif [[ $option == 0 ]]; then
+	menu_main
+elif [[ $option == Q || $option == q ]]; then
+	clear
+	exit 1
+else
+	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
+	sleep 2
+	menu_tor
+fi
+}
+
+menu_exploitation(){
+
+clear
+echo -e "------------------------------------------------------------"
+echo -e "	 -----${LRED} EXPLOITATION MENU ${RESTORE}-----"
+echo -e "------------------------------------------------------------"
+echo -e "\n"
+echo -e "${LRED}(1)${RESTORE} Auto phishing"
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
+if [[ $option == 1 ]]; then
+	cd /root/outils/recherchevulnerabilite/zphisher/
+	bash zphisher.sh
+elif [[ $option == 0 ]]; then
+	menu_main	
+elif [[ $option == Q || $option == q ]]; then
+	clear
+	exit 1	
+else
+	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
+	sleep 2
+	menu_main
+fi	
+}
+
+menu_recherchevulnerabilite(){
+
+clear
+echo -e "------------------------------------------------------------"
+echo -e "	 -----${LRED} RECHERCHE DE VULNERABILITE MENU ${RESTORE}-----"
+echo -e "------------------------------------------------------------"
+echo -e "\n"
+echo -e "${LRED}(1)${RESTORE} Nikto"
+echo -e "${LRED}(2)${RESTORE} Wpscan"
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
+if [[ $option == 1 ]]; then
+	menu_nikto
+elif [[ $option == 2 ]]; then
+	menu_wpscan
+elif [[ $option == 0 ]]; then
+	menu_main	
+elif [[ $option == Q || $option == q ]]; then
+	clear
+	exit 1
+else
+	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
+	sleep 2
+	menu_main
+fi	
+}
+
+menu_cartographie(){
+clear
+echo -e "-----------------------------"
+echo -e "-----${LRED} CARTOGRAPHIE MENU ${RESTORE}-----"
+echo -e "-----------------------------"
+echo -e "${LRED}(1)${RESTORE} Nmap"
+echo -e "${LRED}(2)${RESTORE} DNSrecon"
+echo -e "${LRED}(3)${RESTORE} SQLmap"
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 ]]; then
+		menu_nmap
+	elif [[ $option == 2 ]]; then
+		menu_dnsrecon	
+	elif [[ $option == 3 ]]; then
+		clear
+		sqlmap --wizard
+		echo ""
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main			
+	elif [[ $option == 0 ]]; then
+		menu_main		
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1
+	else
+		echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
+		sleep 2
+		menu_main
+	fi
+done
+}
+
+menu_reconnaissance(){
+clear
+echo -e "-------------------------------"
+echo -e "-----${LRED} RECONNAISSANCE MENU ${RESTORE}-----"
+echo -e "-------------------------------\n"
+echo -e "${LRED}(1)${RESTORE} Linkedin search"
+echo -e "${LRED}(2)${RESTORE} Mail Check"
+echo -e "${LRED}(3)${RESTORE} SpiderShell "
+echo -e "${LRED}(4)${RESTORE} Scan google dorks automatique "
+echo -e "${LRED}(5)${RESTORE} theHarvester "
+echo -e "${LRED}(6)${RESTORE} Phone check "
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
+if [[ $option == 1 ]]; then
+	command_linkedin
+elif [[ $option == 2 ]]; then
+	command_mail
+elif [[ $option == 3 ]]; then
+	command_spidershell
+elif [[ $option == 4 ]]; then
+	command_googledorks
+elif [[ $option == 5 ]]; then
+	command_theHarvester	
+elif [[ $option == 6 ]]; then
+	command_phone	
+elif [[ $option == 0 ]]; then
+	menu_main			
+elif [[ $option == Q || $option == q ]]; then
+	clear
+	exit 1
+else
+	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
+	sleep 2
+	menu_main
+fi	
+}
+
+menu_wpscan(){
+clear
+echo -e "----------------------"
+echo -e "-----${LRED} WpScan MENU ${RESTORE}-----"
+echo -e "----------------------"
+echo -e "\n"
+echo -e "${LRED}(1)${RESTORE} Installer WpScan" 
+echo -e "${LRED}(2)${RESTORE} Désinstaller WpScan" 
+echo -e "${LRED}(3)${RESTORE} Mettre à jour WpScan\n" 
+echo -e "${LRED}(4)${RESTORE} Classic scan"
+echo -e "${LRED}(5)${RESTORE} Plugins scan"
+echo -e "${LRED}(6)${RESTORE} Themes scan"
+echo -e "${LRED}(7)${RESTORE} Timthumbs scan"
+echo -e "${LRED}(8)${RESTORE} Config backups scan"
+echo -e "${LRED}(9)${RESTORE} Db exports scan" 
+echo -e "${LRED}(10)${RESTORE} User IDs scan" 
+echo -e "${LRED}(11)${RESTORE} Media IDs scan" 
+echo -e "${LRED}(12)${RESTORE} Full scan passive" 
+echo -e "${LRED}(13)${RESTORE} Full scan agressive" 
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option : ' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 ]]; then
+		echo -e "Installation de Wpscan en cours ..."
+		dpkg --configure -a
+		apt-get install wpscan -y 2> /dev/nul
+		echo -e "\n\n${LRED}[*]${RESTORE} Wpscan a été installé correctement"
+		echo -e "Retour au menu..."
+		sleep 5
+		menu_wpscan
+	elif [[ $option == 2 ]]; then
+		apt-get remove wpscan -y
+		echo -e "\n\n${LRED}[*]${RESTORE} Wpscan a bien été désinstallé"
+		echo -e "Retour au menu..."
+		sleep 5
+		menu_wpscan
+	elif [[ $option == 3 ]]; then
+		echo -e "Mise à jour de Wpscan en cours ..."
+		wpscan --update
+		echo -e "\n\n${LRED}[*]${RESTORE} Wpscan a été mis à jour correctement"
+		echo -e "Retour au menu..."
+		sleep 5
+		menu_wpscan
+	elif [[ $option == 4 ]]; then  
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
+		python3 -m pip install wpscan-out-parse >> /dev/null
+		echo "scan en cours..."
+		wpscan --url $target --output wpscan.json --format json
+		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
+		rm -f wpscan.json
+		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 5 ]]; then  
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
+		python3 -m pip install wpscan-out-parse -W >> /dev/null
+		echo "scan en cours..."
+		wpscan --url $target --enumerate ap --output wpscan.json --format json
+		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
+		rm -f wpscan.json
+		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 6 ]]; then  
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
+		python3 -m pip install wpscan-out-parse >> /dev/null
+		echo "scan en cours..."
+		wpscan --url $target --enumerate at --output wpscan.json --format json
+		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
+		rm -f wpscan.json
+		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 7 ]]; then  
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
+		python3 -m pip install wpscan-out-parse >> /dev/null
+		echo "scan en cours..."
+		wpscan --url $target --enumerate tt --output wpscan.json --format json
+		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
+		rm -f wpscan.json
+		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 8 ]]; then  
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
+		python3 -m pip install wpscan-out-parse >> /dev/null
+		echo "scan en cours..."
+		wpscan --url $target --enumerate cb --output wpscan.json --format json
+		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
+		rm -f wpscan.json
+		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 9 ]]; then  
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
+		python3 -m pip install wpscan-out-parse >> /dev/null
+		echo "scan en cours..."
+		wpscan --url $target --enumerate dbe --output wpscan.json --format json
+		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
+		rm -f wpscan.json
+		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 10 ]]; then  
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
+		python3 -m pip install wpscan-out-parse >> /dev/null
+		echo "scan en cours..."
+		wpscan --url $target --enumerate u --output wpscan.json --format json
+		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
+		rm -f wpscan.json
+		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 11 ]]; then  
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
+		python3 -m pip install wpscan-out-parse >> /dev/null
+		echo "scan en cours..."
+		wpscan --url $target --enumerate m --output wpscan.json --format json
+		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
+		rm -f wpscan.json
+		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 12 ]]; then  
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
+		python3 -m pip install wpscan-out-parse >> /dev/null
+		echo "scan en cours..."
+		wpscan --url $target --enumerate --detection-mode passive --output wpscan.json --format json
+		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
+		rm -f wpscan.json
+		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 13 ]]; then  
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
+		python3 -m pip install wpscan-out-parse >> /dev/null
+		echo "scan en cours..."
+		wpscan --url $target --enumerate --detection-mode agressive --output wpscan.json --format json
+		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
+		rm -f wpscan.json
+		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 0 ]]; then        
+		menu_main
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option : ' option
+	fi
+done
+}
+
 menu_main(){
 clear
 banner
 echo -e "Vous travaillez actuellement sur le projet ${LBLUE}$name_projet${RESTORE}\n"
 echo -e "Actions possibles dans le ${LRED}RedBook${RESTORE}\n"
-echo -e "${LRED}(1)${RESTORE} Nmap"
-echo -e "${LRED}(2)${RESTORE} SQLmap"
-echo -e "${LRED}(3)${RESTORE} DNSrecon"
-echo -e "${LRED}(4)${RESTORE} Nikto"
+echo -e "${LRED}(1)${RESTORE} Reconnaissance"
+echo -e "${LRED}(2)${RESTORE} Cartographie"
+echo -e "${LRED}(3)${RESTORE} Recherche de vulnérabilité"
+echo -e "${LRED}(4)${RESTORE} Exploitation"
+echo -e "${LRED}(5)${RESTORE} Tor menu"
+echo -e "${LRED}(6)${RESTORE} Blueteam"
 echo -e "\n${LRED}(Q)${RESTORE} Quitter\n\n"
-read -p $"Choisisssez une option:" option
+
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+
 if [[ $option == 1 ]]; then
-	menu_nmap
+	menu_reconnaissance
 elif [[ $option == 2 ]]; then
-	clear
-	sqlmap --wizard
-	echo ""
-	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
-	menu_main
+	menu_cartographie
 elif [[ $option == 3 ]]; then
-	menu_dnsrecon
+	menu_recherchevulnerabilite
 elif [[ $option == 4 ]]; then
-	menu_nikto
+	menu_exploitation
+elif [[ $option == 5 ]]; then
+	menu_tor	
+elif [[ $option == 6 ]]; then
+	menu_blueteam		
 elif [[ $option == Q || $option == q ]]; then
 	clear
 	exit 1
@@ -523,7 +1167,7 @@ echo -e "${LRED}
 \t||||                     |                    ||||
 \t||||                     |                    ||||
 \t||||                     |          benoit.g  ||||
-\t||||                     |           cyril.d  ||||
+\t||||                     |           cyril.b  ||||
 \t||||____  ______________ | __________________ ||||
 \t||/=====================\|/====================\||
 \t'----------------------~___~--------------------''
