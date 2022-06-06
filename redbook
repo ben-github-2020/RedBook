@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#************ Authors ***********
+#*****      Benoit GAUDY    *****
+#***** Cyril BONDENET-DAZIN *****
+#********************************
+#Do not copy this, use your own brain
+#This script was made for a school project
+
+
 #COLORS
 RESTORE='\033[0m'
 LRED='\033[01;31m'
