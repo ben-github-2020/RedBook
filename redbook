@@ -12,18 +12,18 @@ UL='\033[4m'    # underline
 
 
 command_cloudenum(){
-	cd $redbookpath/outils/reconnaissance/cloud_enum
-	read -p $'\e[0;31m[*]\e[0m Indiquer votre cible (e.g. Microsoft): ' target 
-	read -p $'\e[0;31m[*]\e[0m Indiquer le site de votre target (e.g. Microsoft.com) : ' target1
-	read -p $'\e[0;31m[*]\e[0m Indiquer un produit/service fournit par lentreprise (e.g. office365): ' target2
-	pip3 install -r ./requirements.txt &>/dev/null
-	filename="CloudEnum_"$target"_"$(date +%F)"_"$(date +%T)
-	./cloud_enum.py -k $target -k $target1 -k $target2 -t 5 -l "$filename.csv" -f csv
-	mv $filename.csv $redbookpath/$projet/$filename.csv
-	cd $redbookpath/$projet
-	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
-	read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
-	menu_main
+cd $redbookpath/outils/reconnaissance/cloud_enum
+read -p $'\e[0;31m[*]\e[0m Indiquer votre cible (e.g. Microsoft): ' target 
+read -p $'\e[0;31m[*]\e[0m Indiquer le site de votre target (e.g. Microsoft.com) : ' target1
+read -p $'\e[0;31m[*]\e[0m Indiquer un produit/service fournit par lentreprise (e.g. office365): ' target2
+pip3 install -r ./requirements.txt &>/dev/null
+filename="CloudEnum_"$target"_"$(date +%F)"_"$(date +%T)
+./cloud_enum.py -k $target -k $target1 -k $target2 -t 5 -l "$filename.csv" -f csv
+mv $filename.csv $redbookpath/$projet/$filename.csv
+cd $redbookpath/$projet
+echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+menu_main
 }
 	
 command_googledorks(){
