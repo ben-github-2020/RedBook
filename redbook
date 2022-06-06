@@ -2,20 +2,191 @@
 
 #COLORS
 RESTORE='\033[0m'
-
 LRED='\033[01;31m'
 LGREEN='\033[01;32m'
 LYELLOW='\033[01;33m'
 LBLUE='\033[01;34m'
 LPURPLE='\033[01;35m'
 LCYAN='\033[01;36m'
-
 UL='\033[4m'    # underline
 
+
+command_cloudenum(){
+	cd $redbookpath/outils/reconnaissance/cloud_enum
+	read -p $'\e[0;31m[*]\e[0m Indiquer votre cible (e.g. Microsoft): ' target 
+	read -p $'\e[0;31m[*]\e[0m Indiquer le site de votre target (e.g. Microsoft.com) : ' target1
+	read -p $'\e[0;31m[*]\e[0m Indiquer un produit/service fournit par lentreprise (e.g. office365): ' target2
+	pip3 install -r ./requirements.txt &>/dev/null
+	filename="CloudEnum_"$target"_"$(date +%F)"_"$(date +%T)
+	./cloud_enum.py -k $target -k $target1 -k $target2 -t 5 -l "$filename.csv" -f csv
+	mv $filename.csv $redbookpath/$projet/$filename.csv
+	cd $redbookpath/$projet
+	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+	read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+	menu_main
+}
+	
 command_googledorks(){
 read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
 bash $redbookpath/outils/reconnaissance/dorkscan/FGDS.sh $target
 sleep 5
+read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+menu_main
+}
+
+command_ipmyaddr(){
+clear
+printf "\e[0m\n"
+printf "\e[1;33m   _______             _     \e[0m\e[1;32m  _____       \e[0m\n"
+printf "\e[1;33m  |__   __|           | |    \e[0m\e[1;32m |_   _|      \e[0m\n"
+printf "\e[1;33m     | |_ __ __ _  ___| | __ \e[0m\e[1;32m   | |  _ __  \e[0m\n"
+printf "\e[1;33m     | |  __/ _  |/ __| |/ / \e[0m\e[1;32m   | | |  _ \ \e[0m\n"
+printf "\e[1;33m     | | | | (_| | (__|   <  \e[0m\e[1;32m  _| |_| |_) |\e[0m\n"
+printf "\e[1;33m     |_|_|  \__,_|\___|_|\_\ \e[0m\e[1;32m |_____| .__/ \e[0m\n"
+printf "\e[1;32m                                    | |    \e[0m\n"
+printf "\e[1;32m                                    |_|    \e[0m\n"
+printf "\e[0m\n"
+printf "\e[0m\e[1;33m    Created By Anand G NATH \e[0m\e[1;31m(\e[0m\e[1;33m Hack with ethics  \e[0m\e[1;31m)\e[0m\n\n"
+myipaddripapico=$(curl -s "https://ipapi.co//json" -L)
+myipaddripapicom=$(curl -s "http://ip-api.com/json/" -L)
+myip=$(echo $myipaddripapico | grep -Po '(?<="ip":)[^,]*' | tr -d '[]"')
+mycity=$(echo $myipaddripapico | grep -Po '(?<="city":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+myregion=$(echo $myipaddripapico | grep -Po '(?<="region":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+mycountry=$(echo $myipaddripapico | grep -Po '(?<="country_name":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+mylat=$(echo $myipaddripapicom | grep -Po '(?<="lat":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+mylon=$(echo $myipaddripapicom | grep -Po '(?<="lon":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+mytime=$(echo $myipaddripapicom | grep -Po '(?<="timezone":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+mypostal=$(echo $myipaddripapicom | grep -Po '(?<="zip":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+myisp=$(echo $myipaddripapico | grep -Po '(?<="org":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+myasn=$(echo $myipaddripapico | grep -Po '(?<="asn":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+mycountrycode=$(echo $myipaddripapico | grep -Po '(?<="country_code":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+mycurrency=$(echo $myipaddripapico | grep -Po '(?<="currency":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+mylanguage=$(echo $myipaddripapico | grep -Po '(?<="languages":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+mycalling=$(echo $myipaddripapico | grep -Po '(?<="country_calling_code":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+
+printf "\e[0m\n"
+printf "\e[0m\n"
+printf "  \e[0m\e[1;93m  Ip Address    \e[0m\e[1;96m:\e[0m\e[1;92m   $myip\e[0m\n"
+printf "  \e[0m\e[1;93m  City          \e[0m\e[1;96m:\e[0m\e[1;92m   $mycity\e[0m\n"
+printf "  \e[0m\e[1;93m  Region        \e[0m\e[1;96m:\e[0m\e[1;92m   $myregion\e[0m\n"
+printf "  \e[0m\e[1;93m  Country       \e[0m\e[1;96m:\e[0m\e[1;92m   $mycountry\e[0m\n"
+printf "\e[0m\n"
+printf "  \e[0m\e[1;93m  Latitude      \e[0m\e[1;96m:\e[0m\e[1;92m    $mylat\e[0m\n"
+printf "  \e[0m\e[1;93m  Longitude     \e[0m\e[1;96m:\e[0m\e[1;92m    $mylon\e[0m\n"
+printf "  \e[0m\e[1;93m  Time Zone     \e[0m\e[1;96m:\e[0m\e[1;92m    $mytime\e[0m\n"
+printf "  \e[0m\e[1;93m  Postal Code   \e[0m\e[1;96m:\e[0m\e[1;92m    $mypostal\e[0m\n"
+printf "\e[0m\n"
+printf "  \e[0m\e[1;93m  ISP           \e[0m\e[1;96m:\e[0m\e[1;92m   $myisp\e[0m\n"
+printf "  \e[0m\e[1;93m  ASN           \e[0m\e[1;96m:\e[0m\e[1;92m   $myasn\e[0m\n"
+printf "\e[0m\n"
+printf "  \e[0m\e[1;93m  Country Code  \e[0m\e[1;96m:\e[0m\e[1;92m   $mycountrycode\e[0m\n"
+printf "  \e[0m\e[1;93m  Currency      \e[0m\e[1;96m:\e[0m\e[1;92m   $mycurrency\e[0m\n"
+printf "  \e[0m\e[1;93m  Languages     \e[0m\e[1;96m:\e[0m\e[1;92m   $mylanguage\e[0m\n"
+printf "  \e[0m\e[1;93m  Calling Code  \e[0m\e[1;96m:\e[0m\e[1;92m   $mycalling\e[0m\n"
+printf "\e[0m\n"
+printf "  \e[0m\e[1;93m  GOOGLE Maps   \e[0m\e[1;96m:\e[0m\e[1;94m  https://maps.google.com/?q=$mylat,$mylon\e[0m\n"
+
+filename="TrackmyIP_"$myip"_"$(date +%F)"_"$(date +%T)
+touch "$filename.txt"
+echo -e "Ip Address:\t\t$myip" >> "$filename.txt"
+echo -e "Ip City:\t\t$mycity" >> "$filename.txt"
+echo -e "Ip Region:\t\t$myregion" >> "$filename.txt"
+echo -e "Ip Country:\t\t$mycountry" >> "$filename.txt"
+echo -e "Ip Latitude:\t\t $mylat" >> "$filename.txt"
+echo -e "Ip Longitude:\t\t $mylon" >> "$filename.txt"
+echo -e "Ip Time Zone:\t\t $mytime" >> "$filename.txt"
+echo -e "Ip Postal Code:\t\t $mypostal" >> "$filename.txt"
+echo -e "Ip ISP:\t\t\t$myisp" >> "$filename.txt"
+echo -e "Ip ASN:\t\t\t$myasn" >> "$filename.txt"
+echo -e "Ip Country Code\t\t$mycountrycode" >> "$filename.txt"
+echo -e "Ip Currency:\t\t$mycurrency" >> "$filename.txt"
+echo -e "Ip Languages:\t\t$mylanguage" >> "$filename.txt"
+echo -e "Ip Calling Code:\t$mycalling" >> "$filename.txt"
+echo -e "Ip GOOGLE Maps:\t\t https://maps.google.com/?q=$mylat,$mylon" >> "$filename.txt"
+sleep 5
+echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+menu_main
+}
+
+command_useripaddr(){
+printf "\e[0m\n"
+printf "\e[1;33m   _______             _     \e[0m\e[1;32m  _____       \e[0m\n"
+printf "\e[1;33m  |__   __|           | |    \e[0m\e[1;32m |_   _|      \e[0m\n"
+printf "\e[1;33m     | |_ __ __ _  ___| | __ \e[0m\e[1;32m   | |  _ __  \e[0m\n"
+printf "\e[1;33m     | |  __/ _  |/ __| |/ / \e[0m\e[1;32m   | | |  _ \ \e[0m\n"
+printf "\e[1;33m     | | | | (_| | (__|   <  \e[0m\e[1;32m  _| |_| |_) |\e[0m\n"
+printf "\e[1;33m     |_|_|  \__,_|\___|_|\_\ \e[0m\e[1;32m |_____| .__/ \e[0m\n"
+printf "\e[1;32m                                    | |    \e[0m\n"
+printf "\e[1;32m                                    |_|    \e[0m\n"
+printf "\e[0m\n"
+printf "\e[0m\e[1;33m    Created By Anand G NATH \e[0m\e[1;31m(\e[0m\e[1;33m Hack with ethics  \e[0m\e[1;31m)\e[0m\n\n"
+
+read -p $'\e[0;31m[*]\e[0m Indiquer une adresse ip cible : ' useripaddress
+
+ipaddripapico=$(curl -s "https://ipapi.co/$useripaddress/json" -L)
+ipaddripapicom=$(curl -s "http://ip-api.com/json/$useripaddress" -L)
+userip=$(echo $ipaddripapico | grep -Po '(?<="ip":)[^,]*' | tr -d '[]"')
+usercity=$(echo $ipaddripapico | grep -Po '(?<="city":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+useregion=$(echo $ipaddripapico | grep -Po '(?<="region":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+usercountry=$(echo $ipaddripapico | grep -Po '(?<="country_name":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+userlat=$(echo $ipaddripapicom | grep -Po '(?<="lat":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+userlon=$(echo $ipaddripapicom | grep -Po '(?<="lon":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+usertime=$(echo $ipaddripapicom | grep -Po '(?<="timezone":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+userpostal=$(echo $ipaddripapicom | grep -Po '(?<="zip":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+userisp=$(echo $ipaddripapico | grep -Po '(?<="org":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+userasn=$(echo $ipaddripapico | grep -Po '(?<="asn":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+usercountrycode=$(echo $ipaddripapico | grep -Po '(?<="country_code":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+usercurrency=$(echo $ipaddripapico | grep -Po '(?<="currency":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+userlanguage=$(echo $ipaddripapico | grep -Po '(?<="languages":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+usercalling=$(echo $ipaddripapico | grep -Po '(?<="country_calling_code":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+
+printf "\e[0m\n"
+printf "\e[0m\n"
+printf "  \e[0m\e[1;93m  Ip Address    \e[0m\e[1;96m:\e[0m\e[1;92m   $userip\e[0m\n"
+printf "  \e[0m\e[1;93m  City          \e[0m\e[1;96m:\e[0m\e[1;92m   $usercity\e[0m\n"
+printf "  \e[0m\e[1;93m  Region        \e[0m\e[1;96m:\e[0m\e[1;92m   $useregion\e[0m\n"
+printf "  \e[0m\e[1;93m  Country       \e[0m\e[1;96m:\e[0m\e[1;92m   $usercountry\e[0m\n"
+printf "\e[0m\n"
+printf "  \e[0m\e[1;93m  Latitude      \e[0m\e[1;96m:\e[0m\e[1;92m    $userlat\e[0m\n"
+printf "  \e[0m\e[1;93m  Longitude     \e[0m\e[1;96m:\e[0m\e[1;92m    $userlon\e[0m\n"
+printf "  \e[0m\e[1;93m  Time Zone     \e[0m\e[1;96m:\e[0m\e[1;92m    $usertime\e[0m\n"
+printf "  \e[0m\e[1;93m  Postal Code   \e[0m\e[1;96m:\e[0m\e[1;92m    $userpostal\e[0m\n"
+printf "\e[0m\n"
+printf "  \e[0m\e[1;93m  ISP           \e[0m\e[1;96m:\e[0m\e[1;92m   $userisp\e[0m\n"
+printf "  \e[0m\e[1;93m  ASN           \e[0m\e[1;96m:\e[0m\e[1;92m   $userasn\e[0m\n"
+printf "\e[0m\n"
+printf "  \e[0m\e[1;93m  Country Code  \e[0m\e[1;96m:\e[0m\e[1;92m   $usercountrycode\e[0m\n"
+printf "  \e[0m\e[1;93m  Currency      \e[0m\e[1;96m:\e[0m\e[1;92m   $usercurrency\e[0m\n"
+printf "  \e[0m\e[1;93m  Languages     \e[0m\e[1;96m:\e[0m\e[1;92m   $userlanguage\e[0m\n"
+printf "  \e[0m\e[1;93m  Calling Code  \e[0m\e[1;96m:\e[0m\e[1;92m   $usercalling\e[0m\n"
+printf "\e[0m\n"
+printf "  \e[0m\e[1;93m  GOOGLE Maps   \e[0m\e[1;96m:\e[0m\e[1;94m  https://maps.google.com/?q=$userlat,$userlon\e[0m\n"
+
+filename="TrackuserIP_"$userip"_"$(date +%F)"_"$(date +%T)
+touch "$filename.txt"
+echo -e "Ip Address:\t\t$userip" >> "$filename.txt"
+echo -e "Ip City:\t\t$usercity" >> "$filename.txt"
+echo -e "Ip Region:\t\t$userregion" >> "$filename.txt"
+echo -e "Ip Country:\t\t$usercountry" >> "$filename.txt"
+echo -e "Ip Latitude:\t\t $userlat" >> "$filename.txt"
+echo -e "Ip Longitude:\t\t $userlon" >> "$filename.txt"
+echo -e "Ip Time Zone:\t\t $usertime" >> "$filename.txt"
+echo -e "Ip Postal Code:\t\t $userpostal" >> "$filename.txt"
+echo -e "Ip ISP:\t\t\t$userisp" >> "$filename.txt"
+echo -e "Ip ASN:\t\t\t$userasn" >> "$filename.txt"
+echo -e "Ip Country Code\t\t$usercountrycode" >> "$filename.txt"
+echo -e "Ip Currency:\t\t$usercurrency" >> "$filename.txt"
+echo -e "Ip Languages:\t\t$userlanguage" >> "$filename.txt"
+echo -e "Ip Calling Code:\t$usercalling" >> "$filename.txt"
+echo -e "Ip GOOGLE Maps:\t\t https://maps.google.com/?q=$userlat,$userlon" >> "$filename.txt"
+sleep 5
+echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+menu_main
+
+sleep 5
+echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 menu_main
 }
@@ -27,10 +198,10 @@ touch niktocustom
 chmod +x niktocustom
 echo ""
 #cible
-read -p "Target URL : " target
+read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target
 echo "nikto -h $target" | tr -d "\n" >> niktocustom
 #port
-read -p "Target port (80,443,... - default=80) : " port
+read -p $'\e[0;31m[*]\e[0m Target port (80,443,... - default=80) : ' port
 default_port="80"
 port="${port:-${default_port}}"
 re="^[0-9]+$|^[0-9]+([,][0-9]+)+$"
@@ -39,15 +210,14 @@ while [[ TRUE ]]; do
 		echo " -p $port" | tr -d "\n" >> niktocustom
 		break
 	else
-		echo -e "${LYELLOW}/!\ Erreur : nombres uniquement !${RESTORE}"
-		read -p "Target port (80,443,... - default=80) : " port
+		echo -e "${LYELLOW}/!\ Erreur : nombres uniquement ! séparés par ','${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Target port (80,443,... - default=80) : ' port
 		default_port="80"
 		port="${port:-${default_port}}"
 	fi
 done
-
 #proxy
-read -p "Voulez vous effectuer un scan avec proxy ? (yes/no - default=no) : " proxy
+read -p $'\e[0;31m[*]\e[0m Voulez vous effectuer un scan avec proxy ? (yes/no - default=no) : ' proxy
 default_proxy="no"
 proxy="${proxy:-${default_proxy}}"
 while [[ TRUE ]]; do
@@ -58,7 +228,7 @@ while [[ TRUE ]]; do
 		break
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
-		read -p "Voulez vous effectuer un scan avec proxy ? (yes/no - default=no) : " proxy
+		read -p $'\e[0;31m[*]\e[0m Voulez vous effectuer un scan avec proxy ? (yes/no - default=no) : ' proxy
 		default_proxy="no"
 		proxy="${proxy:-${default_proxy}}"
 	fi
@@ -72,7 +242,7 @@ echo -e "\n"
 ./niktocustom
 rm -f niktocustom
 echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
-read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
+read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 menu_main
 }
 
@@ -82,16 +252,16 @@ touch nmapcustom
 chmod +x nmapcustom
 echo ""
 #cible
-read -p "[*] Indiquer votre cible : " target
+read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target
 echo "nmap $target" | tr -d "\n" >> nmapcustom
 #timing and perf
-echo -e "\n0 = Paranoid	Intrusion Detection System evasion"
-echo -e "1 = Sneaky	Intrusion Detection System evasion"
-echo -e "2 = Polite	slows down the scan to use less bandwidth and use less target machine resources"
-echo -e "3 = Normal	which is default speed"
-echo -e "4 = Aggressive	speeds scans; assumes you are on a reasonably fast and reliable network"
-echo -e "5 = Insane	speeds scan; assumes you are on an extraordinarily fast network"
-read -p "[*] Timing & Performance ? (0/1/2/3/4/5 - default=3) : " scantimingandperf
+echo -e "\n[0] = Paranoid	Intrusion Detection System evasion"
+echo -e "[1] = Sneaky	Intrusion Detection System evasion"
+echo -e "[2] = Polite	slows down the scan to use less bandwidth and use less target machine resources"
+echo -e "[3] = Normal	which is default speed"
+echo -e "[4] = Aggressive	speeds scans; assumes you are on a reasonably fast and reliable network"
+echo -e "[5] = Insane	speeds scan; assumes you are on an extraordinarily fast network"
+read -p $'\e[0;31m[*]\e[0m Timing & Performance ? (0/1/2/3/4/5 #default=3) : ' scantimingandperf
 default_scantimingandperf="3"
 scantimingandperf="${scantimingandperf:-${default_scantimingandperf}}"
 while [[ TRUE ]]; do
@@ -115,13 +285,13 @@ while [[ TRUE ]]; do
 		break
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
-		read -p "[*] Timing & Performance ? (0/1/2/3/4/5 - default=3) : " scantimingandperf
+		read -p $'\e[0;31m[*]\e[0m Timing & Performance ? (0/1/2/3/4/5 #default=3) : ' scantimingandperf
 		default_scantimingandperfe="3"
 		scantimingandperf="${scantimingandperf:-${default_scantimingandperf}}"
 	fi
 done
 #scan technique
-read -p "[*] Scan technique ? (syn/ack/udp - default=syn) : " scantechnique
+read -p $'\e[0;31m[*]\e[0m Scan technique ? (syn/ack/udp - default=syn) : ' scantechnique
 default_scantechnique="syn"
 scantechnique="${scantechnique:-${default_scantechnique}}"
 while [[ TRUE ]]; do
@@ -136,13 +306,13 @@ while [[ TRUE ]]; do
 		break
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
-		read -p "[*] Scan technique ? (syn/ack/udp - default=syn) : " scantechnique
+		read -p $'\e[0;31m[*]\e[0m Scan technique ? (syn/ack/udp - default=syn) : ' scantechnique
 		default_scantechnique="syn"
 		scantechnique="${scantechnique:-${default_scantechnique}}"
 	fi
 done
 #ports
-read -p "[*] Specific Port ? (yes/no - default=no) : " port
+read -p $'\e[0;31m[*]\e[0m Specific Port ? (yes/no - default=no) : ' port
 default_port="no"
 port="${port:-${default_port}}"
 quitloop="no"
@@ -150,13 +320,13 @@ while [[ TRUE ]]; do
 	if [[ $quitloop == yes ]]; then
 		break
 	elif [[ $port == yes || $port == y ]]; then
-		read -p "[*] Starting Port : " startport
+		read -p $'\e[0;31m[*]\e[0m Starting Port : ' startport
 		re="^[0-9]+$"
 		while ! [[ $startport =~ $re ]]; do
 			echo -e "${LYELLOW}/!\ Invalide: uniquement un nombre ${RESTORE}"
-			read -p "[*] Starting Port : " startport
+			read -p $'\e[0;31m[*]\e[0m Starting Port : ' startport
 		done
-		read -p "[*] Ending Port : " endport
+		read -p $'\e[0;31m[*]\e[0m Ending Port : ' endport
 		while [[ TRUE ]]; do
 			if [[ $endport =~ $re ]]; then
 				if [[ $endport > $startport ]];then
@@ -165,24 +335,24 @@ while [[ TRUE ]]; do
 					break
 				else
 					echo -e "${LYELLOW} /!\ Le port de fin est inferieur au port de départ ${RESTORE}"
-					read -p "[*] Ending Port : " endport
+					read -p $'\e[0;31m[*]\e[0m Ending Port : ' endport
 				fi
 			else	
 				echo -e "${LYELLOW}/!\ Invalide: uniquement un nombre ${RESTORE}"
-				read -p "[*] Ending Port : " endport
+				read -p $'\e[0;31m[*]\e[0m Ending Port : ' endport
 			fi
 		done
 	elif [[ $port == no || $port == n ]]; then 
 		break
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
-		read -p "[*] Specific Port ? (yes/no - default=no) : " port
+		read -p $'\e[0;31m[*]\e[0m Specific Port ? (yes/no - default=no) : ' port
 		default_port="no"
 		port="${port:-${default_port}}"
 	fi
 done
 #scan services
-read -p "[*] Scan services ? (yes/no - default=no) : " scanservice
+read -p $'\e[0;31m[*]\e[0m Scan services ? (yes/no - default=no) : ' scanservice
 default_scanservice="no"
 scanservice="${scanservice:-${default_scanservice}}"
 while [[ TRUE ]]; do
@@ -193,13 +363,13 @@ while [[ TRUE ]]; do
 		break
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
-		read -p "[*] Scan services ? (yes/no - default=no) : " scanservice
+		read -p $'\e[0;31m[*]\e[0m Scan services ? (yes/no - default=no) : ' scanservice
 		default_scanservice="no"
 		scanservice="${scanservice:-${default_scanservice}}"
 	fi
 done
 #scan OS
-read -p "[*] Scan operating system (yes/no - default=no) : " scanos
+read -p $'\e[0;31m[*]\e[0m Scan operating system (yes/no - default=no) : ' scanos
 default_scanos="no"
 scanos="${scanos:-${default_scanos}}"
 while [[ TRUE ]]; do
@@ -210,13 +380,13 @@ while [[ TRUE ]]; do
 		break
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
-		read -p "[*] Scan operating system ? (yes/no - default=no) : " scanos
+		read -p $'\e[0;31m[*]\e[0m Scan operating system (yes/no - default=no) : ' scanos
 		default_scanos="no"
 		scanos="${scanos:-${default_scanos}}"
 	fi
 done
 #scan script NSE
-read -p "[*] Use default scripts NSE (yes/no - default= no) " scannse
+read -p $'\e[0;31m[*]\e[0m Use default scripts NSE (yes/no - default= no) ' scannse
 default_scannse="no"
 scannse="${scannse:-${default_scannse}}"
 while [[ TRUE ]]; do
@@ -227,7 +397,7 @@ while [[ TRUE ]]; do
 		break
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
-		read -p "[*] Use default scripts NSE ? (yes/no - default=no) : " scannse
+		read -p $'\e[0;31m[*]\e[0m Use default scripts NSE (yes/no - default= no) ' scannse
 		default_scannse="no"
 		scannse="${scannse:-${default_scannse}}"
 	fi
@@ -241,56 +411,37 @@ echo -e "\n"
 xsltproc $filename -o $filename
 rm -f nmapcustom
 echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
-read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
+read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 menu_main
 }
 
 command_mail(){
-read -p $'\e[0;31m[*]\e[0m Check e-mail: ' email
-checkmail=$(curl -s https://api.2ip.me/email.txt?email=$email | grep -o 'true\|false')
-if [[ $checkmail == 'true' ]]; then
-	echo -e "${LGREEN} e-mail valide !${RESTORE}"
-	read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal'
-	menu_main
-elif [[ $checkmail == 'false' ]]; then
-	echo -e "${LRED} e-mail invalide !${RESTORE}"
-	read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal'
-	menu_main
-fi
+read -p $'\e[0;31m[*]\e[0m Check e-mail (Q pour retour au menu principal): ' email
+while [[ TRUE ]]; do
+	if [[ $email == Q || $email == q ]]; then
+		menu_main
+	else
+		checkmail=$(curl -s https://api.2ip.me/email.txt?email=$email | grep -o 'true\|false')
+		if [[ $checkmail == 'true' ]]; then
+			echo -e "${LGREEN}[v] Valide${RESTORE}"
+			read -p $'\e[0;31m[*]\e[0m Check e-mail (Q pour retour au menu principal): ' email
+		elif [[ $checkmail == 'false' ]]; then
+			echo -e "${LRED}[!] Invalide${RESTORE}"
+			read -p $'\e[0;31m[*]\e[0m Check e-mail (Q pour retourner au menu principal): ' email
+		fi
+	fi
+done	
 }
 
 command_phone(){
-
 if [[ -e phoneinfo.txt ]]; then
-rm -rf phoneinfo.txt
+	rm -rf phoneinfo.txt
 fi
-
-read -p $'\e[1;92m[*] Phone (e.g.: 14158586273): \e[0m' phone
-
-getphone=$(curl -s "apilayer.net/api/validate?access_key=43fc2577cf1cdb2eb522583eaee6ae8f&number='$phone'&country_code=&format=1" -L > phoneinfo.txt)
-
-valid=$(grep -o 'valid\":true' phoneinfo.txt )
-if [[ $valid == *'valid":true'* ]]; then
-
-
-country=$(grep 'country_name\":\"' phoneinfo.txt | cut -d ":" -f2 | tr -d ',' | tr -d '\"')
-location=$(grep 'location\":\"' phoneinfo.txt | cut -d ":" -f2 | tr -d ',' | tr -d '\"')
-carrier=$(grep 'carrier\":\"' phoneinfo.txt | cut -d ":" -f2 | tr -d ',' | tr -d '\"')
-line_type=$(grep 'line_type\":\"' phoneinfo.txt | cut -d ":" -f2 | tr -d ',' | tr -d '\"')
-IFS=$'\n'
-printf "\e[1;92m[*] Country:\e[0m\e[1;77m %s\e[0m\n" $country
-printf "\e[1;92m[*] Location:\e[0m\e[1;77m %s\e[0m\n" $location
-printf "\e[1;92m[*] Carrier:\e[0m\e[1;77m %s\e[0m\n" $carrier
-printf "\e[1;92m[*] Line Type:\e[0m\e[1;77m %s\e[0m\n" $line_type
-
+read -p $'\e[0;31m[*]\e[0m Phone (e.g.: +33654323478): ' phone
+getphone=$(curl -s "https://api.apilayer.com/number_verification/validate?number='$phone'" --header 'apikey: MNrci5lzL8Q0bDXjZLjUfnjGzrPlA0Ky' -L > "phoneinfo_"$phone"_"$(date +%F)"_"$(date +%T)".txt")
 echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 menu_main
-
-else
-printf "\e[1;93m[!] Request invalid!\e[0m\n"
-command_phone
-fi
 }
 
 command_spidershell(){
@@ -308,15 +459,13 @@ read -p $'\e[0;31m[*]\e[0m Crawl Depth (Default '$default_crawl'): ' crawl
 crawl="${crawl:-${default_crawl}}"
 read -p $'\e[0;31m[*]\e[0m Threads (Default '$default_threads'): ' threads
 threads="${threads:-${default_threads}}"
-
-printf "\e[101m[*] Spider Shell is \e[5mrunning\e[25m, please wait... \e[0m \n"
+echo -e "${LRED}Spider Shell ${RESTORE}is ${LCYAN}running${RESTORE}, please wait...\n"
 start="$(date -u +%s)"
 wget --no-check-certificate -q $site -O - | tr "\t\r\n'" '   "' | grep -i -o '<a[^>]\+href[ ]*=[ \t]*"\(ht\|f\)tps\?:[^"]\+"' | sed -e 's/^.*"\([^"]\+\)".*$/\1/g' > spider.url.$turn
 let counter++
-
 function spider() {
-let turn++
-cat spider.url.$((turn-1)) | xargs -P $threads -I % wget --no-check-certificate -q % -O - | tr "\t\r\n'" '   "' | grep -i -o '<a[^>]\+href[ ]*=[ \t]*"\(ht\|f\)tps\?:[^"]\+"' | sed -e 's/^.*"\([^"]\+\)".*$/\1/g' >> spider.url.$turn
+	let turn++
+	cat spider.url.$((turn-1)) | xargs -P $threads -I % wget --no-check-certificate -q % -O - | tr "\t\r\n'" '   "' | grep -i -o '<a[^>]\+href[ ]*=[ \t]*"\(ht\|f\)tps\?:[^"]\+"' | sed -e 's/^.*"\([^"]\+\)".*$/\1/g' >> spider.url.$turn
 }
 while [[ "$crawl" -gt "$counter" ]]; do
   spider
@@ -357,7 +506,6 @@ ${RED}[${WHITE}13${RED}]${ORANGE} Github-code		${RED}[${WHITE}26${RED}]${ORANGE}
 	
 read -p $'\e[0;31m[*]\e[0m Choisissez une option parmis les sources de recherche ci-dessus : ' option
 while [[ TRUE ]]; do	
-		
 	if [[ $option == 1 || $option == 01 ]]; then
 		theHarvester -d $target -l $result -b anubis -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
 		break
@@ -486,12 +634,146 @@ read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au m
 menu_main
 }
 
+command_wordpresscheck(){
+DOMAIN="$1"
+MAX_TIME=5
+USER_AGENT="Firefox"
+method1=false
+method2=false
+method3=false
+ROBOTS_TXT="$(curl -L -s --max-time $MAX_TIME --user-agent $USER_AGENT $DOMAIN/robots.txt)"
+SEARCH_DISALLOW="wp-admin"
+DISALLOW_ST
+if [[ ${ROBOTS_TXT,,} == *${DISALLOW_STRING,,}*${SEARCH_DISALLOW,,}* ]]; then
+    method1=true
+fi
+HEADERS_LOGIN="$(curl -L -s -I --max-time $MAX_TIME --user-agent $USER_AGENT $DOMAIN/wp-login.php)"
+COOKIE_SEARCH_LOGIN="set-cookie: wordpress_test_cookie=WP+Cookie+check"
+if [[ ${HEADERS_LOGIN,,} == *${COOKIE_SEARCH_LOGIN,,}* ]]; then
+    method2=true
+fi
+HTML="$(curl -L -s --max-time $MAX_TIME --user-agent $USER_AGENT $DOMAIN)"
+REGEX_SEARCH_GENERATOR="<meta.*generator.*wordpress.*>"
+if [[ ${HTML,,} =~ $REGEX_SEARCH_GENERATOR ]]; then
+    method3=true
+fi
+if $method1 || $method2 || $method3 ; then
+	site="Il s'agit d'un site wordpress"
+	echo -e "${NEW} ${LBLUE} $site ${RESTORE} \n"
+else
+	site1="Il ne s'agit pas d'un site wordpress"
+	echo -e "${NEW} ${LBLUE} $site1 ${RESTORE} \n"
+fi
+}
+
+
+
+menu_hydra(){
+clear
+echo -e "${LRED}                         #                  ${RESTORE}"
+echo -e "${LRED} #     #                 #                  ${RESTORE}"
+echo -e "${LRED} #     #                 #                   ${RESTORE}"
+echo -e "${LRED} #     #  #    #    ######   # ###    ###### ${RESTORE}"
+echo -e "${LRED} #######  #    #   #     #   ##      #     # ${RESTORE}"
+echo -e "${LRED} #     #  #    #   #     #   #       #     # ${RESTORE}"
+echo -e "${LRED} #     #  #    #   #     #   #       #    ## ${RESTORE}"
+echo -e "${LRED} #     #   #####    ######   #        #### # ${RESTORE}"
+echo -e "${LRED}               #                            ${RESTORE}"
+echo -e "${LRED}           ####                              ${RESTORE}\n\n"
+echo -e "${LRED}(1)${RESTORE} Hydra FTP"
+echo -e "${LRED}(2)${RESTORE} Hydra Windows Remote Desktop"
+echo -e "${LRED}(3)${RESTORE} Hydra SMB"
+echo -e "${LRED}(4)${RESTORE} Hydra SSH one user"
+echo -e "${LRED}(5)${RESTORE} Hydra SSH with users list"
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option : ' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 ]]; then
+		gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null
+		default_user="admin"
+		default_list=/usr/share/wordlists/rockyou.txt
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		read -p $'\e[0;31m[*]\e[0m Indiquer le user (default = admin) : ' user
+		read -p $'\e[0;31m[*]\e[0m Indiquer le chemin complet de la wordlist (default = rockyou) : ' list
+		user="${user:-${default_user}}"
+		list="${list:-${default_list}}"
+		filename="Hydra_FTP_"$target"_"$(date +%F)"_"$(date +%T)
+		hydra -t 1 -l $user -P $list -vV $target ftp -o "$filename.txt"
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 2 ]]; then
+		gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null
+		default_user="administrator"
+		default_list=/usr/share/wordlists/rockyou.txt
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		read -p $'\e[0;31m[*]\e[0m Indiquer le user (default = administrator) : ' user
+		read -p $'\e[0;31m[*]\e[0m Indiquer le chemin complet de la wordlist (default = rockyou) : ' list
+		user="${user:-${default_user}}"
+		list="${list:-${default_list}}"
+		filename="Hydra_RDP_"$target"_"$(date +%F)"_"$(date +%T)
+		hydra -t 1 -V -f -l $user -P $list rdp://$target -o "$filename.txt"
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 3 ]]; then
+		gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null
+		default_user="administrator"
+		default_list=/usr/share/wordlists/rockyou.txt
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		read -p $'\e[0;31m[*]\e[0m Indiquer le user (default = administrator) : ' user
+		read -p $'\e[0;31m[*]\e[0m Indiquer le chemin complet de la wordlist (default = rockyou) : ' list
+		user="${user:-${default_user}}"
+		list="${list:-${default_list}}"
+		filename="Hydra_SMB_"$target"_"$(date +%F)"_"$(date +%T)
+		hydra -t 1 -V -f -l $user -P $list $target smb -o "$filename.txt"
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 4 ]]; then
+		gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null
+		default_user="admin"
+		default_list=/usr/share/wordlists/rockyou.txt
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		read -p $'\e[0;31m[*]\e[0m Indiquer le user (default = admin) : ' user
+		read -p $'\e[0;31m[*]\e[0m Indiquer le chemin complet de la wordlist (default = rockyou) : ' list
+		user="${user:-${default_user}}"
+		list="${list:-${default_list}}"
+		filename="Hydra_SSH_"$target"_"$(date +%F)"_"$(date +%T)
+		hydra $target -s 22 ssh -l $user -P $list -o "$filename.txt"
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 5 ]]; then
+		gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null
+		default_list=/usr/share/wordlists/rockyou.txt
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		read -p $'\e[0;31m[*]\e[0m Indiquer la liste des users (chemin complet !) : ' user
+		read -p $'\e[0;31m[*]\e[0m Indiquer le chemin complet de la wordlist (default = rockyou) : ' list
+		list="${list:-${default_list}}"
+		filename="Hydra_SSH_"$target"_"$(date +%F)"_"$(date +%T)
+		hydra -v -V -u -L $user -P $list -t 1 -u $ip ssh -o "$filename.txt"
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main		
+	elif [[ $option == 0 ]]; then
+		menu_main
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option : ' option
+	fi
+done
+}
 
 menu_dnsrecon(){
 clear
 echo -e "-------------------------"
 echo -e "-----${LRED} DNSRECON MENU ${RESTORE}-----"
-echo -e "-------------------------"
+echo -e "-------------------------\n"
 echo -e "${LRED}(1)${RESTORE} Standard Record Enumeration"
 echo -e "${LRED}(2)${RESTORE} Zone Transfer"
 echo -e "${LRED}(3)${RESTORE} Zone walking"
@@ -499,61 +781,134 @@ echo -e "${LRED}(4)${RESTORE} Domain brute force enumeration"
 echo -e "${LRED}(5)${RESTORE} Full scan" 
 echo -e "\n${LRED}(0)${RESTORE} Menu principal"
 echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 ]]; then
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target  
+		filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
+		dnsrecon -d $target --csv "$redbookpath/$projet/$filename.csv"
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 2 ]]; then
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target  
+		filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
+		dnsrecon -d $target -t axfr --csv "$redbookpath/$projet/$filename.csv"
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 3 ]]; then
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target  
+		filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
+		dnsrecon -d $target -t zonewalk --csv "$redbookpath/$projet/$filename.csv"
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 4 ]]; then
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target  
+		filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
+		dnsrecon -d $target -t brt --csv "$redbookpath/$projet/$filename.csv"
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 5 ]]; then
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target  
+		filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
+		dnsrecon -d $target -azkyb --csv "$redbookpath/$projet/$filename.csv"
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 0 ]]; then
+		menu_main
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+	fi
+done
+}
 
-read -p "Choisisssez une option:" option
+menu_haveibeenpwned(){
+clear
+echo -e "------------------------------"
+echo -e "---${LRED} HAVE I BEEN PWNED MENU ${RESTORE}---"
+echo -e "------------------------------\n"
+echo -e "${LRED}(1)${RESTORE} Mot de passe pwned ? "
+echo -e "${LRED}(2)${RESTORE} Adresse email pwned ? "
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 ]]; then
+		echo -e "${LRED}[*]${RESTORE}Vérifie si votre mot de passe à déjà été compromis suite à une violations de donnée sur un site web. (Utilise la base de donnée du site haveibeenpwned.com)\n"
+		read -p $'\e[0;31m[*]\e[0m Indiquer le mot de passe à vérifier : ' password
+		mysha="$(echo -n $password | sha1sum | awk '{print toupper($1)}')"
+		prefix=${mysha:0:5}
+		suffix=${mysha:5}
+		result="$(curl -s https://api.pwnedpasswords.com/range/$prefix | grep $suffix)"
+		if [ $? -ne 0 ]; then
+			echo -e "${LGREEN}[v]${RESTORE} Mot de passe non trouvé sur api.pwnedpasswords.com"
+		else
+			appearance=`echo -n ${result} | cut -f2 -d: | sed -e 's/\r//'`
+			echo -e "${LRED}[!]${RESTORE} Mot de passe trouvé ${LRED} $appearance ${RESTORE} fois. ${LRED} Ne l'utilisez pas !${RESTORE}\n"
+		fi
+		echo -e "\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 2 ]]; then
+		echo -e "${LRED}[*]${RESTORE}Vérifie si un compte ayant été créé avec votre adresse email à déjà été compromis suite à une violations de donnée sur un site web. (Utilise la base de donnée du site haveibeenpwned.com)\n"
+		read -p $'\e[0;31m[*]\e[0m Adresse mail : ' addremail
+		encode=$(sed 's/@/%40/g' <<<"$addremail")
+		curl -H "hibp-api-key:5859d73bf29b4ee9a08e8b0b8b199894" -H "user-agent: Beyond the Frame" -sS https://haveibeenpwned.com/api/v3/breachedaccount/$encode?truncateResponse=false -o "DataBreach_$addremail.json" 
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main		
+	elif [[ $option == 0 ]]; then
+		menu_main	
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1	
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
+	fi	
+done
+}
 
-if [[ $option == 1 ]]; then
-    read -p "[*]  Indiquer votre cible :" target 
-	filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
-    dnsrecon -d $target --csv "$redbookpath/$projet/$filename.csv"
-	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
-	read -n 1 -s -r -p " Appuyer sur une touche pour retourner au menu principal"
-	menu_main
-elif [[ $option == 2 ]]; then
-    read -p "[*]  Indiquer votre cible :" target 
-	filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
-    dnsrecon -d $target -t axfr --csv "$redbookpath/$projet/$filename.csv"
-	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
-	read -n 1 -s -r -p " Appuyer sur une touche pour retourner au menu principal"
-	menu_main
-elif [[ $option == 3 ]]; then
-    read -p "[*]  Indiquer votre cible :" target 
-	filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
-    dnsrecon -d $target -t zonewalk --csv "$redbookpath/$projet/$filename.csv"
-	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
-	read -n 1 -s -r -p " Appuyer sur une touche pour retourner au menu principal"
-	menu_main
-elif [[ $option == 4 ]]; then
-    read -p "[*]  Indiquer votre cible :" target 
-	filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
-    dnsrecon -d $target -t brt --csv "$redbookpath/$projet/$filename.csv"
-	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
-	read -n 1 -s -r -p " Appuyer sur une touche pour retourner au menu principal"
-	menu_main
-elif [[ $option == 5 ]]; then
-    read -p "[*]  Indiquer votre cible :" target 
-	filename="DNSrecon_"$target"_"$(date +%F)"_"$(date +%T)
-    dnsrecon -d $target -azkyb --csv "$redbookpath/$projet/$filename.csv"
-	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
-	read -n 1 -s -r -p " Appuyer sur une touche pour retourner au menu principal"
-	menu_main
-elif [[ $option == 0 ]]; then
-	menu_main
-elif [[ $option == Q || $option == q ]]; then
-	clear
-	exit 1
-else
-	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
-	sleep 2
-	menu_dnsrecon
-fi
+menu_iptrack(){
+clear
+echo -e "---------------------"
+echo -e "---${LRED} IP TRACK MENU ${RESTORE}---"
+echo -e "---------------------\n"
+echo -e "${LRED}(1)${RESTORE} My ip"
+echo -e "${LRED}(2)${RESTORE} Track ip "
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 ]]; then
+		command_ipmyaddr
+	elif [[ $option == 2 ]]; then
+		command_useripaddr
+	elif [[ $option == 0 ]]; then
+		menu_main
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+	fi
+done
 }
 
 menu_nikto(){
 clear
 echo -e "----------------------"
 echo -e "-----${LRED} NIKTO MENU ${RESTORE}-----"
-echo -e "----------------------"
+echo -e "----------------------\n"
 echo -e "${LRED}(1)${RESTORE} Installer Nikto"
 echo -e "${LRED}(2)${RESTORE} Désinstaller Nikto"
 echo -e "${LRED}(3)${RESTORE} Modifier les parametres proxy"
@@ -562,331 +917,207 @@ echo -e "${LRED}(5)${RESTORE} Simple scan"
 echo -e "${LRED}(6)${RESTORE} Custom scan" 
 echo -e "\n${LRED}(0)${RESTORE} Menu principal"
 echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
-read -p "Choisisssez une option:" option
-
-if [[ $option == 1 ]]; then
-	echo -e "Installation de Nikto en cours ..."
-	dpkg --configure -a
-	sudo apt-get install nikto 2> /dev/nul
-	echo -e "\n\n${LRED}[*]${RESTORE} Nikto a été installé correctement"
-	echo -e "Retour au menu..."
-	sleep 5
-	menu_nikto
-elif [[ $option == 2 ]]; then
-	apt-get remove nikto -y
-	echo -e "\n${LRED}[*]${RESTORE} Nikto a bien été désinstallé"
-	echo -e "Retour au menu..."
-	sleep 5
-	menu_nikto	
-elif [[ $option == 3 ]]; then
-    read -p "[*] PROXY HOST (Url ou l’IP du serveur proxy) ? : " PHOST
-	read -p "[*] PROXY PORT (Port du proxy) ? : " PPORT
-    read -p "[*] PROXY USER (Utilisateur si besoin) ? : " PUSER
-	read -p "[*] PROXY PASS (Mot de passe de l’utilisateur si besoin) ? : " PPASS
-    sed -i 's/^#*PROXYHOST=.*/PROXYHOST='"${PHOST}"'/' /etc/nikto.conf	
-	sed -i 's/^#*PROXYPORT=.*/PROXYPORT='"${PPORT}"'/' /etc/nikto.conf	
-	sed -i 's/^#*PROXYUSER=.*/PROXYUSER='"${PUSER}"'/' /etc/nikto.conf	
-    sed -i 's/^#*PROXYPASS=.*/PROXYPASS='"${PPASS}"'/' /etc/nikto.conf	
-	echo -e "\n${LRED}[*]${RESTORE} Les paramètres proxy ont été mis à jour"
-	echo -e "Retour au menu..."
-    sleep 5
-	menu_nikto
-elif [[ $option == 4 ]]; then
-	sed -i 's/^#PROXYHOST=./#PROXYHOST='"127.0.0.1"'/' /etc/nikto.conf
-	sed -i 's/^#PROXYPORT=./#PROXYPORT='"8080"'/' /etc/nikto.conf
-	sed -i 's/^#PROXYUSER=./#PROXYUSER='"proxyuserid"'/' /etc/nikto.conf
-	sed -i 's/^#PROXYPASS=./#PROXYPASS='"proxypassword"'/' /etc/nikto.conf
-	echo -e "\n${LRED}[*]${RESTORE} Les paramètres proxy ont été réinitialisé"
-	echo -e "Retour au menu..."
-	sleep 5
-	menu_nikto
-elif [[ $option == 5 ]]; then
-    read -p "[*]  Target url ? :" target 
-	filename="Nikto_"$target"_"$(date +%F)"_"$(date +%T)
-    nikto -h $target -F htm -o $filename
-	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
-	read -n 1 -s -r -p " Appuyer sur une touche pour retourner au menu principal"
-	menu_main
-elif [[ $option == 6 ]]; then
-	command_niktocustom
-elif [[ $option == 0 ]]; then
-	menu_main
-elif [[ $option == Q || $option == q ]]; then
-	clear
-	exit 1
-else
-	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
-	sleep 2
-	menu_nikto
-fi
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 ]]; then
+		echo -e "Installation de Nikto en cours ..."
+		dpkg --configure -a 2>/dev/null
+		sudo apt-get install nikto 2>/dev/null
+		echo -e "\n\n${LRED}[*]${RESTORE} Nikto a été installé correctement"
+		echo -e "Retour au menu..."
+		sleep 5
+		menu_nikto
+	elif [[ $option == 2 ]]; then
+		echo -e "Désinstallation de Nikto en cours ..."
+		apt-get remove nikto -y 2>/dev/null
+		echo -e "\n${LRED}[*]${RESTORE} Nikto a été désinstallé correctement"
+		echo -e "Retour au menu..."
+		sleep 5
+		menu_nikto	
+	elif [[ $option == 3 ]]; then
+		echo -e "\n"
+		read -p $'\e[0;31m[*]\e[0m PROXY HOST (Url ou l’IP du serveur proxy) ? : ' PHOST
+		read -p $'\e[0;31m[*]\e[0m PROXY PORT (Port du proxy) ? : ' PPORT
+		read -p $'\e[0;31m[*]\e[0m PROXY USER (Utilisateur si besoin) ? : ' PUSER
+		read -p $'\e[0;31m[*]\e[0m PROXY PASS (Mot de passe de l’utilisateur si besoin) ? : ' PPASS
+		sed -i 's/^#*PROXYHOST=.*/PROXYHOST='"${PHOST}"'/' /etc/nikto.conf	
+		sed -i 's/^#*PROXYPORT=.*/PROXYPORT='"${PPORT}"'/' /etc/nikto.conf	
+		sed -i 's/^#*PROXYUSER=.*/PROXYUSER='"${PUSER}"'/' /etc/nikto.conf	
+		sed -i 's/^#*PROXYPASS=.*/PROXYPASS='"${PPASS}"'/' /etc/nikto.conf	
+		echo -e $'\n\e[0;31m[*]\e[0m Les paramètres proxy ont été mis à jour'
+		echo -e "Retour au menu..."
+		sleep 5
+		menu_nikto
+	elif [[ $option == 4 ]]; then
+		sed -i 's/^#PROXYHOST=./#PROXYHOST='"127.0.0.1"'/' /etc/nikto.conf
+		sed -i 's/^#PROXYPORT=./#PROXYPORT='"8080"'/' /etc/nikto.conf
+		sed -i 's/^#PROXYUSER=./#PROXYUSER='"proxyuserid"'/' /etc/nikto.conf
+		sed -i 's/^#PROXYPASS=./#PROXYPASS='"proxypassword"'/' /etc/nikto.conf
+		echo -e "\n${LRED}[*]${RESTORE} Les paramètres proxy ont été réinitialisé"
+		echo -e "Retour au menu..."
+		sleep 5
+		menu_nikto
+	elif [[ $option == 5 ]]; then
+		read -p $'\e[0;31m[*]\e[0m Target url ? :' target  
+		filename="Nikto_"$target"_"$(date +%F)"_"$(date +%T)
+		nikto -h $target -F htm -o $filename
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 6 ]]; then
+		command_niktocustom
+	elif [[ $option == 0 ]]; then
+		menu_main
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+	fi
+done
 }
 
 menu_nmap(){
 clear
 echo -e "---------------------"
 echo -e "-----${LRED} NMAP MENU ${RESTORE}-----"
-echo -e "---------------------"
+echo -e "---------------------\n"
 echo -e "${LRED}(1)${RESTORE} Nmap Classique"
 echo -e "${LRED}(2)${RESTORE} Nmap Full"
 echo -e "${LRED}(3)${RESTORE} Nmap IDS Evasion"
 echo -e "${LRED}(4)${RESTORE} Nmap Custom"
 echo -e "\n${LRED}(0)${RESTORE} Menu principal"
 echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
-read -p $"Choisisssez une option : " option
-if [[ $option == 1 ]]; then
-	read -p $"Indiquer votre cible : " target
-	echo -e "\n"
-	filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
-	nmap -v $target -oX $filename
-	xsltproc $filename -o $filename
-	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
-	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
-	menu_main
-elif [[ $option == 2 ]]; then
-	read -p $"Indiquer votre cible : " target
-	echo -e "\n"
-	filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
-	nmap $target -T4 -A -oX $filename
-	xsltproc $filename -o $filename
-	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
-	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
-	menu_main
-elif [[ $option == 3 ]]; then
-	read -p $"Indiquer votre cible : " target
-	echo -e "\n"
-	filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
-	nmap $target -v -f -T0 -n -Pn --data-length 200 -oX $filename
-	xsltproc $filename -o $filename
-	echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
-	read -n 1 -s -r -p "Appuyer sur une touche pour retourner au menu principal "
-	menu_main
-elif [[ $option == 4 ]]; then
-	command_nmapcustom
-elif [[ $option == 0 ]]; then
-	menu_main
-elif [[ $option == Q || $option == q ]]; then
-	clear
-	exit 1
-else
-	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
-	sleep 2
-	menu_nmap
-fi
-}
-
-
-
-
-
-
-menu_blueteam(){
-
-clear
-echo -e "------------------------------------------------------------"
-echo -e "	 -----${LRED} BLUETEAM MENU ${RESTORE}-----"
-echo -e "------------------------------------------------------------"
-echo -e "\n"
-echo -e "${LRED}(1)${RESTORE} Autopsy "
-echo -e "\n${LRED}(0)${RESTORE} Menu principal"
-echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
-read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
-if [[ $option == 1 ]]; then
-	autopsy
-elif [[ $option == 0 ]]; then
-	menu_main	
-elif [[ $option == Q || $option == q ]]; then
-	clear
-	exit 1	
-else
-	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
-	sleep 2
-	menu_main
-fi	
-}
-
-menu_tor(){
-
-clear
-echo -e "----------------------"
-echo -e " -----${LRED} TOR MENU ${RESTORE}-----"
-echo -e "----------------------"
-echo -e "\n"
-echo -e "${LRED}(1)${RESTORE} Installer TOR"
-echo -e "${LRED}(2)${RESTORE} Désinstaller TOR"
-echo -e "${LRED}(3)${RESTORE} Block Tor"
-echo -e "${LRED}(4)${RESTORE} Anonymisation Tor"
-echo -e "${LRED}(5)${RESTORE} Quelle est mon adresse ip ?"
-echo -e "\n${LRED}(0)${RESTORE} Menu principal"
-echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
-read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
-
-if [[ $option == 1 ]]; then
-	echo -e "${LRED}[*]${RESTORE} Installation de TOR en cours ..."
-	apt-get install tor -y
-	echo -e "\n\n${LRED}[*]${RESTORE} TOR a été installé correctement"
-	echo -e "Retour au menu..."
-	sleep 5
-	menu_tor
-elif [[ $option == 2 ]]; then
-	apt -y remove tor
-	echo -e "\n${LRED}[*]${RESTORE} TOR a bien été désinstallé"
-	echo -e "Retour au menu..."
-	sleep 5
-	menu_tor
-elif [[ $option == 3 ]]; then
-	command_blocktor
-elif [[ $option == 4 ]]; then
-	command_anontor	
-elif [[ $option == 5 ]]; then
-	adrip=$(wget -qO- icanhazip.com)
-	echo -e "\n${LRED}[]${RESTORE} Votre adresse ip est : ${LBLUE} $adrip ${RESTORE} \n"
-	read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu Tor'
-	menu_tor
-elif [[ $option == 0 ]]; then
-	menu_main
-elif [[ $option == Q || $option == q ]]; then
-	clear
-	exit 1
-else
-	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
-	sleep 2
-	menu_tor
-fi
-}
-
-menu_exploitation(){
-
-clear
-echo -e "------------------------------------------------------------"
-echo -e "	 -----${LRED} EXPLOITATION MENU ${RESTORE}-----"
-echo -e "------------------------------------------------------------"
-echo -e "\n"
-echo -e "${LRED}(1)${RESTORE} Auto phishing"
-echo -e "\n${LRED}(0)${RESTORE} Menu principal"
-echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
-read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
-if [[ $option == 1 ]]; then
-	cd /root/outils/recherchevulnerabilite/zphisher/
-	bash zphisher.sh
-elif [[ $option == 0 ]]; then
-	menu_main	
-elif [[ $option == Q || $option == q ]]; then
-	clear
-	exit 1	
-else
-	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
-	sleep 2
-	menu_main
-fi	
-}
-
-menu_recherchevulnerabilite(){
-
-clear
-echo -e "------------------------------------------------------------"
-echo -e "	 -----${LRED} RECHERCHE DE VULNERABILITE MENU ${RESTORE}-----"
-echo -e "------------------------------------------------------------"
-echo -e "\n"
-echo -e "${LRED}(1)${RESTORE} Nikto"
-echo -e "${LRED}(2)${RESTORE} Wpscan"
-echo -e "\n${LRED}(0)${RESTORE} Menu principal"
-echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
-read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
-if [[ $option == 1 ]]; then
-	menu_nikto
-elif [[ $option == 2 ]]; then
-	menu_wpscan
-elif [[ $option == 0 ]]; then
-	menu_main	
-elif [[ $option == Q || $option == q ]]; then
-	clear
-	exit 1
-else
-	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
-	sleep 2
-	menu_main
-fi	
-}
-
-menu_cartographie(){
-clear
-echo -e "-----------------------------"
-echo -e "-----${LRED} CARTOGRAPHIE MENU ${RESTORE}-----"
-echo -e "-----------------------------"
-echo -e "${LRED}(1)${RESTORE} Nmap"
-echo -e "${LRED}(2)${RESTORE} DNSrecon"
-echo -e "${LRED}(3)${RESTORE} SQLmap"
-echo -e "\n${LRED}(0)${RESTORE} Menu principal"
-echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
-read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option : ' option
 while [[ TRUE ]]; do
 	if [[ $option == 1 ]]; then
-		menu_nmap
-	elif [[ $option == 2 ]]; then
-		menu_dnsrecon	
-	elif [[ $option == 3 ]]; then
-		clear
-		sqlmap --wizard
-		echo ""
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		echo -e "\n"
+		filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
+		nmap -v $target -oX $filename
+		xsltproc $filename -o $filename
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
-		menu_main			
+		menu_main
+	elif [[ $option == 2 ]]; then
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
+		echo -e "\n"
+		filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
+		nmap $target -T4 -A -oX $filename
+		xsltproc $filename -o $filename
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 3 ]]; then
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target
+		echo -e "\n"
+		filename="Nmap_"$target"_"$(date +%F)"_"$(date +%T)
+		nmap $target -v -f -T0 -n -Pn --data-length 200 -oX $filename
+		xsltproc $filename -o $filename
+		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 4 ]]; then
+		command_nmapcustom
 	elif [[ $option == 0 ]]; then
-		menu_main		
+		menu_main
 	elif [[ $option == Q || $option == q ]]; then
 		clear
 		exit 1
 	else
-		echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
-		sleep 2
-		menu_main
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option : ' option
 	fi
 done
 }
 
-menu_reconnaissance(){
+menu_toranon(){
 clear
-echo -e "-------------------------------"
-echo -e "-----${LRED} RECONNAISSANCE MENU ${RESTORE}-----"
-echo -e "-------------------------------\n"
-echo -e "${LRED}(1)${RESTORE} Linkedin search"
-echo -e "${LRED}(2)${RESTORE} Mail Check"
-echo -e "${LRED}(3)${RESTORE} SpiderShell "
-echo -e "${LRED}(4)${RESTORE} Scan google dorks automatique "
-echo -e "${LRED}(5)${RESTORE} theHarvester "
-echo -e "${LRED}(6)${RESTORE} Phone check "
+echo -e "${LRED}(1)${RESTORE} Start Tor proxy"
+echo -e "${LRED}(2)${RESTORE} Stop Tor proxy"
+echo -e "${LRED}(3)${RESTORE} Changer MAC address"
+echo -e "${LRED}(4)${RESTORE} Supprimer logs + Change hostname"
+echo -e "${LRED}(5)${RESTORE} Start Tor proxy + Change MAC address + Supprimer logs ?"
 echo -e "\n${LRED}(0)${RESTORE} Menu principal"
-echo -e "${LRED}(Q)${RESTORE} Quitter\n"
-read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
-if [[ $option == 1 ]]; then
-	command_linkedin
-elif [[ $option == 2 ]]; then
-	command_mail
-elif [[ $option == 3 ]]; then
-	command_spidershell
-elif [[ $option == 4 ]]; then
-	command_googledorks
-elif [[ $option == 5 ]]; then
-	command_theHarvester	
-elif [[ $option == 6 ]]; then
-	command_phone	
-elif [[ $option == 0 ]]; then
-	menu_main			
-elif [[ $option == Q || $option == q ]]; then
-	clear
-	exit 1
-else
-	echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
-	sleep 2
-	menu_main
-fi	
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 ]]; then
+		$redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --tor
+		sleep 5
+		menu_toranon
+	elif [[ $option == 2 ]]; then
+		$redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --clearnet
+		sleep 5
+		menu_toranon
+	elif [[ $option == 3 ]]; then
+		$redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --mac
+		sleep 5
+		menu_toranon
+	elif [[ $option == 4 ]]; then
+		$redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --logs
+		sleep 5
+		menu_toranon
+	elif [[ $option == 5 ]]; then
+		$redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --all
+		sleep 5
+		menu_toranon
+	elif [[ $option == 0 ]]; then
+		menu_main
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+	fi
+done
+}
+
+menu_torblock(){
+clear
+echo -e "${LRED}[*]${RESTORE} Bloquez les IP Tor pour qu'elles n'accèdent pas à votre serveur \n"
+echo -e "${LRED}(1)${RESTORE} Start"
+echo -e "${LRED}(2)${RESTORE} Stop"
+echo -e "${LRED}(3)${RESTORE} Status"
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisissez une options : ' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 || $option == 01 ]]; then
+		if [ $(dpkg-query -W -f='${status}' ipset 2>/dev/null | grep -c "ok installed") -eq 0 ]; then 
+			echo -e $'\e[0;31m[*]\e[0m Installation de du package ipset pour la configuration réseau'
+			apt-get install ipset -y >>/dev/null;
+		fi
+		bash $redbookpath/outils/tor/blocktor.sh --start 2>/dev/null
+		sleep 4
+		menu_torblock
+	elif [[ $option == 2 || $option == 02 ]]; then
+		bash $redbookpath/outils/tor/blocktor.sh --stop 2>/dev/null
+		sleep 4
+		menu_torblock
+	elif [[ $option == 3 || $option == 03 ]]; then
+		bash $redbookpath/outils/tor/blocktor.sh --status 2>/dev/null
+		sleep 4
+		menu_torblock
+	elif [[ $option == 0 ]]; then
+		menu_main	
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1	
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisissez une options : ' option_blocktor
+	fi	
+done
 }
 
 menu_wpscan(){
 clear
 echo -e "----------------------"
 echo -e "-----${LRED} WpScan MENU ${RESTORE}-----"
-echo -e "----------------------"
-echo -e "\n"
+echo -e "----------------------\n"
 echo -e "${LRED}(1)${RESTORE} Installer WpScan" 
 echo -e "${LRED}(2)${RESTORE} Désinstaller WpScan" 
 echo -e "${LRED}(3)${RESTORE} Mettre à jour WpScan\n" 
@@ -900,27 +1131,29 @@ echo -e "${LRED}(10)${RESTORE} User IDs scan"
 echo -e "${LRED}(11)${RESTORE} Media IDs scan" 
 echo -e "${LRED}(12)${RESTORE} Full scan passive" 
 echo -e "${LRED}(13)${RESTORE} Full scan agressive" 
+echo -e "${LRED}(14)${RESTORE} S'agit-il d'un site Wordpress ? "
 echo -e "\n${LRED}(0)${RESTORE} Menu principal"
 echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
 read -p $'\e[0;31m[*]\e[0m Choisisssez une option : ' option
 while [[ TRUE ]]; do
 	if [[ $option == 1 ]]; then
 		echo -e "Installation de Wpscan en cours ..."
-		dpkg --configure -a
-		apt-get install wpscan -y 2> /dev/nul
+		dpkg --configure -a 2>/dev/nul
+		apt-get install wpscan -y 2>/dev/nul
 		echo -e "\n\n${LRED}[*]${RESTORE} Wpscan a été installé correctement"
 		echo -e "Retour au menu..."
 		sleep 5
 		menu_wpscan
 	elif [[ $option == 2 ]]; then
-		apt-get remove wpscan -y
-		echo -e "\n\n${LRED}[*]${RESTORE} Wpscan a bien été désinstallé"
+		echo -e "désinstallation de Wpscan en cours ..."
+		apt-get remove wpscan -y 2>/dev/null
+		echo -e "\n\n${LRED}[*]${RESTORE} Wpscan a été désinstallé correctement"
 		echo -e "Retour au menu..."
 		sleep 5
 		menu_wpscan
 	elif [[ $option == 3 ]]; then
 		echo -e "Mise à jour de Wpscan en cours ..."
-		wpscan --update
+		wpscan --update 2>/dev/null
 		echo -e "\n\n${LRED}[*]${RESTORE} Wpscan a été mis à jour correctement"
 		echo -e "Retour au menu..."
 		sleep 5
@@ -928,121 +1161,128 @@ while [[ TRUE ]]; do
 	elif [[ $option == 4 ]]; then  
 		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
 		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
-		python3 -m pip install wpscan-out-parse >> /dev/null
-		echo "scan en cours..."
+		echo "Scan en cours..."
+		python3 -m pip install wpscan-out-parse &>/dev/null
 		wpscan --url $target --output wpscan.json --format json
 		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
 		rm -f wpscan.json
-		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		python3 -m pip uninstall wpscan-out-parse -y &>/dev/null
 		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 		menu_main
 	elif [[ $option == 5 ]]; then  
 		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
 		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
-		python3 -m pip install wpscan-out-parse -W >> /dev/null
-		echo "scan en cours..."
+		echo "Scan en cours..."
+		python3 -m pip install wpscan-out-parse &>/dev/null
 		wpscan --url $target --enumerate ap --output wpscan.json --format json
 		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
 		rm -f wpscan.json
-		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		python3 -m pip uninstall wpscan-out-parse -y &>/dev/null
 		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 		menu_main
 	elif [[ $option == 6 ]]; then  
 		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
 		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
-		python3 -m pip install wpscan-out-parse >> /dev/null
-		echo "scan en cours..."
+		echo "Scan en cours..."
+		python3 -m pip install wpscan-out-parse &>/dev/null
 		wpscan --url $target --enumerate at --output wpscan.json --format json
 		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
 		rm -f wpscan.json
-		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		python3 -m pip uninstall wpscan-out-parse -y &>/dev/null
 		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 		menu_main
 	elif [[ $option == 7 ]]; then  
 		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
 		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
-		python3 -m pip install wpscan-out-parse >> /dev/null
-		echo "scan en cours..."
+		echo "Scan en cours..."
+		python3 -m pip install wpscan-out-parse &>/dev/null
 		wpscan --url $target --enumerate tt --output wpscan.json --format json
 		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
 		rm -f wpscan.json
-		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		python3 -m pip uninstall wpscan-out-parse -y &>/dev/null
 		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 		menu_main
 	elif [[ $option == 8 ]]; then  
 		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
 		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
-		python3 -m pip install wpscan-out-parse >> /dev/null
-		echo "scan en cours..."
+		echo "Scan en cours..."
+		python3 -m pip install wpscan-out-parse &>/dev/null
 		wpscan --url $target --enumerate cb --output wpscan.json --format json
 		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
 		rm -f wpscan.json
-		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		python3 -m pip uninstall wpscan-out-parse -y &>/dev/null
 		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 		menu_main
 	elif [[ $option == 9 ]]; then  
 		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
 		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
-		python3 -m pip install wpscan-out-parse >> /dev/null
-		echo "scan en cours..."
+		echo "Scan en cours..."
+		python3 -m pip install wpscan-out-parse &>/dev/null
 		wpscan --url $target --enumerate dbe --output wpscan.json --format json
 		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
 		rm -f wpscan.json
-		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		python3 -m pip uninstall wpscan-out-parse -y &>/dev/null
 		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 		menu_main
 	elif [[ $option == 10 ]]; then  
 		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
 		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
-		python3 -m pip install wpscan-out-parse >> /dev/null
-		echo "scan en cours..."
+		echo "Scan en cours..."
+		python3 -m pip install wpscan-out-parse &>/dev/null
 		wpscan --url $target --enumerate u --output wpscan.json --format json
 		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
 		rm -f wpscan.json
-		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		python3 -m pip uninstall wpscan-out-parse -y &>/dev/null
 		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 		menu_main
 	elif [[ $option == 11 ]]; then  
 		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
 		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
-		python3 -m pip install wpscan-out-parse >> /dev/null
-		echo "scan en cours..."
+		echo "Scan en cours..."
+		python3 -m pip install wpscan-out-parse &>/dev/null
 		wpscan --url $target --enumerate m --output wpscan.json --format json
 		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
 		rm -f wpscan.json
-		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		python3 -m pip uninstall wpscan-out-parse -y &>/dev/null
 		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 		menu_main
 	elif [[ $option == 12 ]]; then  
 		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
 		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
-		python3 -m pip install wpscan-out-parse >> /dev/null
-		echo "scan en cours..."
+		echo "Scan en cours..."
+		python3 -m pip install wpscan-out-parse &>/dev/null
 		wpscan --url $target --enumerate --detection-mode passive --output wpscan.json --format json
 		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
 		rm -f wpscan.json
-		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		python3 -m pip uninstall wpscan-out-parse -y &>/dev/null
 		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
 		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 		menu_main
 	elif [[ $option == 13 ]]; then  
 		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target 
 		filename="Wpscan_"$target"_"$(date +%F)"_"$(date +%T)
-		python3 -m pip install wpscan-out-parse >> /dev/null
-		echo "scan en cours..."
+		echo "Scan en cours..."
+		python3 -m pip install wpscan-out-parse &>/dev/null
 		wpscan --url $target --enumerate --detection-mode agressive --output wpscan.json --format json
 		python3 -m wpscan_out_parse wpscan.json --format html > $filename.html
 		rm -f wpscan.json
-		python3 -m pip uninstall wpscan-out-parse >> /dev/null
+		python3 -m pip uninstall wpscan-out-parse -y &>/dev/null
 		echo -e "\n${LRED}[*]${RESTORE} Le resultat a été exporté dans votre projet en cours ($redbookpath/$projet)\n\n"
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 14 ]]; then  
+		read -p $'\e[0;31m[*]\e[0m Indiquer votre cible : ' target
+		echo -e "\n"
+		command_wordpresscheck 	$target
+		echo -e "\n"
 		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 		menu_main
 	elif [[ $option == 0 ]]; then        
@@ -1054,6 +1294,231 @@ while [[ TRUE ]]; do
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
 		read -p $'\e[0;31m[*]\e[0m Choisisssez une option : ' option
 	fi
+done
+}
+
+
+
+menu_blueteam(){
+clear
+echo -e "-------------------------"
+echo -e "-----${LRED} BLUETEAM MENU ${RESTORE}-----"
+echo -e "-------------------------\n"
+echo -e "${LRED}(1)${RESTORE} Autopsy "
+echo -e "${LRED}(2)${RESTORE} Have i been pwned ? "
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 ]]; then
+		autopsy
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 2 ]]; then
+		menu_haveibeenpwned	
+	elif [[ $option == 0 ]]; then
+		menu_main	
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1	
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+	fi	
+done
+}
+
+menu_tor(){
+clear
+echo -e "----------------------"
+echo -e " -----${LRED} TOR MENU ${RESTORE}-----"
+echo -e "----------------------\n"
+echo -e "${LRED}(1)${RESTORE} Installer TOR"
+echo -e "${LRED}(2)${RESTORE} Désinstaller TOR"
+echo -e "${LRED}(3)${RESTORE} Block Tor"
+echo -e "${LRED}(4)${RESTORE} Anonymisation Tor"
+echo -e "${LRED}(5)${RESTORE} Quelle est mon adresse ip ?"
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 ]]; then
+		echo -e "${LRED}[*]${RESTORE} Installation de TOR en cours ..."
+		apt-get install tor -y >> /dev/null
+		echo -e "\n\n${LRED}[*]${RESTORE} TOR a été installé correctement"
+		echo -e "Retour au menu..."
+		sleep 5
+		menu_tor
+	elif [[ $option == 2 ]]; then
+		echo -e "${LRED}[*]${RESTORE} désinstallation de TOR en cours ..."
+		apt -y remove tor >> /dev/null
+		echo -e "\n${LRED}[*]${RESTORE} TOR a été désinstallé correctement"
+		echo -e "Retour au menu..."
+		sleep 5
+		menu_tor
+	elif [[ $option == 3 ]]; then
+		menu_torblock
+	elif [[ $option == 4 ]]; then
+		menu_toranon	
+	elif [[ $option == 5 ]]; then
+		adrip=$(wget -qO- icanhazip.com)
+		echo -e "${LRED}[*]${RESTORE} Votre adresse ip est : ${LBLUE} $adrip ${RESTORE} \n"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+	elif [[ $option == 0 ]]; then
+		menu_main
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+	fi
+done
+}
+
+menu_exploitation(){
+clear
+echo -e "-----------------------------"
+echo -e "-----${LRED} EXPLOITATION MENU ${RESTORE}-----"
+echo -e "-----------------------------\n"
+echo -e "${LRED}(1)${RESTORE} Auto Phishing"
+echo -e "${LRED}(2)${RESTORE} The Social-Engineer Toolkit"
+echo -e "${LRED}(3)${RESTORE} Hydra Bruteforce"
+echo -e "${LRED}(4)${RESTORE} SQLmap"
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 ]]; then
+		cd $redbookpath/outils/recherchevulnerabilite/zphisher
+		bash zphisher.sh
+		echo ""
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		cd $redbookpath/$projet
+		menu_main
+	elif [[ $option == 2 ]]; then	
+		cd $redbookpath/outils/exploit/social-engineer-toolkit
+		python3 setup.py &>/dev/null
+		python3 setoolkit -y
+		filename="SEtoolkit_"$(date +%F)"_"$(date +%T)
+		mv /root/.set/reports/*.xml $redbookpath/$projet/$filename.xml
+		echo ""
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		cd $redbookpath/$projet
+		menu main
+	elif [[ $option == 3 ]]; then	
+		menu_hydra	
+	elif [[ $option == 4 ]]; then
+		clear
+		sqlmap --wizard
+		echo ""
+		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
+		menu_main
+	elif [[ $option == 0 ]]; then
+		menu_main	
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1	
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+	fi	
+done
+}
+
+menu_recherchevulnerabilite(){
+clear
+echo -e "-------------------------------------------"
+echo -e "-----${LRED} RECHERCHE DE VULNERABILITE MENU ${RESTORE}-----"
+echo -e "-------------------------------------------\n"
+echo -e "${LRED}(1)${RESTORE} Nikto"
+echo -e "${LRED}(2)${RESTORE} Wpscan"
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 ]]; then
+		menu_nikto
+	elif [[ $option == 2 ]]; then
+		menu_wpscan
+	elif [[ $option == 0 ]]; then
+		menu_main	
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1
+	else
+		echo -e "\n${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+	fi	
+done
+}
+
+menu_cartographie(){
+clear
+echo -e "-----------------------------"
+echo -e "-----${LRED} CARTOGRAPHIE MENU ${RESTORE}-----"
+echo -e "-----------------------------\n"
+echo -e "${LRED}(1)${RESTORE} Nmap"
+echo -e "${LRED}(2)${RESTORE} DNSrecon"
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 ]]; then
+		menu_nmap
+	elif [[ $option == 2 ]]; then
+		menu_dnsrecon				
+	elif [[ $option == 0 ]]; then
+		menu_main		
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+	fi
+done
+}
+
+menu_reconnaissance(){
+clear
+echo -e "-------------------------------"
+echo -e "-----${LRED} RECONNAISSANCE MENU ${RESTORE}-----"
+echo -e "-------------------------------\n"
+echo -e "${LRED}(1)${RESTORE} Mail Check"
+echo -e "${LRED}(2)${RESTORE} SpiderShell "
+echo -e "${LRED}(3)${RESTORE} Scan google dorks automatique "
+echo -e "${LRED}(4)${RESTORE} theHarvester "
+echo -e "${LRED}(5)${RESTORE} Phone check "
+echo -e "${LRED}(6)${RESTORE} Cloud Enumeration "
+echo -e "${LRED}(7)${RESTORE} Ip Track "
+echo -e "\n${LRED}(0)${RESTORE} Menu principal"
+echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+while [[ TRUE ]]; do
+	if [[ $option == 1 ]]; then
+		command_mail
+	elif [[ $option == 2 ]]; then
+		command_spidershell
+	elif [[ $option == 3 ]]; then
+		command_googledorks
+	elif [[ $option == 4 ]]; then
+		command_theHarvester
+	elif [[ $option == 5 ]]; then
+		command_phone
+	elif [[ $option == 6 ]]; then
+		command_cloudenum		
+	elif [[ $option == 7 ]]; then
+		menu_iptrack
+	elif [[ $option == 0 ]]; then
+		menu_main			
+	elif [[ $option == Q || $option == q ]]; then
+		clear
+		exit 1
+	else
+		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
+		read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
+	fi	
 done
 }
 
@@ -1069,9 +1534,7 @@ echo -e "${LRED}(4)${RESTORE} Exploitation"
 echo -e "${LRED}(5)${RESTORE} Tor menu"
 echo -e "${LRED}(6)${RESTORE} Blueteam"
 echo -e "\n${LRED}(Q)${RESTORE} Quitter\n\n"
-
 read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
-
 if [[ $option == 1 ]]; then
 	menu_reconnaissance
 elif [[ $option == 2 ]]; then
@@ -1098,16 +1561,16 @@ menu_start(){
 #check root
 if [[ "$(id -u)" != 0 ]]; then
 	echo -e "${LYELLOW}/!\ Ce programme doit être lancé en root !${RESTORE}\n"
-	read -n 1 -s -r -p "Appuyer sur une touche pour quitter "
+	read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour quitter '
 	clear
 	exit 1
 fi
 #timezone Paris
 timedatectl set-timezone Europe/Paris
 #path main dossier
-redbookpath=$(find / -name "RedBook" 2>/dev/null)
+redbookpath=$(find / -not -path '*/.*' -type d -name 'RedBook' 2>/dev/null)
 cd $redbookpath
-#creation dossier principal
+#creation dossier principal des projets
 if [[ ! -d Projets ]]; then 
 	mkdir Projets
 fi
@@ -1115,13 +1578,13 @@ fi
 echo -e "${LRED}(1)${RESTORE} Créer un nouveau projet"
 echo -e "${LRED}(2)${RESTORE} Reprendre un projet en cours"
 echo -e "\n${LRED}(Q)${RESTORE} Quitter\n\n"
-read -p "Choisissez une option : " option
+read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
 if [[ $option == 1 ]]; then
-	read -p "Nom du nouveau projet : " name_projet
+	read -p $'\e[0;31m[*]\e[0m Nom du nouveau projet : ' name_projet
 	projet="Projets/"$name_projet
 	while [[ -d $projet ]]; do
 		echo -e "${LYELLOW}/!\ Le projet ${LBLUE}$name_projet${LYELLOW} existe déjà${RESTORE}\n"
-		read -p $"Nom du nouveau projet : " name_projet
+		read -p $'\e[0;31m[*]\e[0m Nom du nouveau projet : ' name_projet
 		projet="Projets/"$name_projet
 	done
 	mkdir $projet
@@ -1131,11 +1594,11 @@ elif [[ $option == 2 ]]; then
 	echo -e "\n${UL}Voici les projets en cours${RESTORE}\n"
 	ls Projets
 	echo ""
-	read -p $"Nom du projet à continuer  : " name_projet
+	read -p $'\e[0;31m[*]\e[0m Nom du projet à continuer : ' name_projet
 	projet="Projets/"$name_projet
 	while [[ ! -d $projet ]]; do
 		echo -e "${LYELLOW}/!\ Le projet ${LBLUE}$name_projet${LYELLOW} n'existe pas${RESTORE}\n"
-		read -p $"Nom du projet à continuer : " name_projet
+		read -p $'\e[0;31m[*]\e[0m Nom du projet à continuer : ' name_projet
 		projet="Projets/"$name_projet
 	done
 	cd $projet
