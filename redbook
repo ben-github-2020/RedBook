@@ -655,7 +655,7 @@ method2=false
 method3=false
 ROBOTS_TXT="$(curl -L -s --max-time $MAX_TIME --user-agent $USER_AGENT $DOMAIN/robots.txt)"
 SEARCH_DISALLOW="wp-admin"
-DISALLOW_ST
+DISALLOW_STRING="Disallow:"
 if [[ ${ROBOTS_TXT,,} == *${DISALLOW_STRING,,}*${SEARCH_DISALLOW,,}* ]]; then
     method1=true
 fi
