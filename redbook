@@ -1056,23 +1056,23 @@ echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
 read -p $'\e[0;31m[*]\e[0m Choisisssez une option: ' option
 while [[ TRUE ]]; do
 	if [[ $option == 1 ]]; then
-		$redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --tor
+		bash $redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --tor
 		sleep 5
 		menu_toranon
 	elif [[ $option == 2 ]]; then
-		$redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --clearnet
+		bash $redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --clearnet
 		sleep 5
 		menu_toranon
 	elif [[ $option == 3 ]]; then
-		$redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --mac
+		bash $redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --mac
 		sleep 5
 		menu_toranon
 	elif [[ $option == 4 ]]; then
-		$redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --logs
+		bash $redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --logs
 		sleep 5
 		menu_toranon
 	elif [[ $option == 5 ]]; then
-		$redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --all
+		bash $redbookpath/outils/tor/anon/AnonScript/AnonScript.sh --all
 		sleep 5
 		menu_toranon
 	elif [[ $option == 0 ]]; then
@@ -1652,6 +1652,9 @@ echo -e "Le ${LRED}Redbook${RESTORE} ne doit en aucun cas être utilisé afin de
 }
 
 #START
+#update apt
+echo "Mise à jour apt... veuillez patienter"
+apt update &>/dev/null
 clear
 banner
 menu_start
