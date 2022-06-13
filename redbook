@@ -1420,7 +1420,7 @@ while [[ TRUE ]]; do
 		echo ""
 		read -n 1 -s -r -p $'\e[0;31m[*]\e[0m Appuyer sur une touche pour retourner au menu principal '
 		cd $redbookpath/$projet
-		menu main
+		menu_main
 	elif [[ $option == 3 ]]; then	
 		menu_hydra	
 	elif [[ $option == 4 ]]; then
