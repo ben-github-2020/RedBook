@@ -16,6 +16,9 @@ LYELLOW='\033[01;33m'
 LBLUE='\033[01;34m'
 LPURPLE='\033[01;35m'
 LCYAN='\033[01;36m'
+ORANGE="$(printf '\033[33m')"
+WHITE="$(printf '\033[37m')"
+RED="$(printf '\033[31m')"
 UL='\033[4m'    # underline
 
 
@@ -513,123 +516,124 @@ ${RED}[${WHITE}13${RED}]${ORANGE} Github-code		${RED}[${WHITE}26${RED}]${ORANGE}
 	EOF
 	
 read -p $'\e[0;31m[*]\e[0m Choisissez une option parmis les sources de recherche ci-dessus : ' option
-while [[ TRUE ]]; do	
+while [[ TRUE ]]; do
+	filename="theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
 	if [[ $option == 1 || $option == 01 ]]; then
-		theHarvester -d $target -l $result -b anubis -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b anubis -f $filename
 		break
 	elif [[ $option == 2 || $option == 02 ]]; then
-		theHarvester -d $target -l $result -b baidu -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b baidu -f $filename
 		break
 	elif [[ $option == 3 || $option == 03 ]]; then
-		theHarvester -d $target -l $result -b bing -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b bing -f $filename
 		break
 	elif [[ $option == 4 || $option == 04 ]]; then
-		theHarvester -d $target -l $result -b binaryedge -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b binaryedge -f $filename
 		break
 	elif [[ $option == 5 || $option == 05 ]]; then
-		theHarvester -d $target -l $result -b bingapi -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b bingapi -f $filename
 		break
 	elif [[ $option == 6 || $option == 06 ]]; then
-		theHarvester -d $target -l $result -b bufferoverun -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b bufferoverun -f $filename
 		break
 	elif [[ $option == 7 || $option == 07 ]]; then
-		theHarvester -d $target -l $result -b censys -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b censys -f $filename
 		break
 	elif [[ $option == 8 || $option == 08 ]]; then
-		theHarvester -d $target -l $result -b certspotter -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b certspotter -f $filename
 		break
 	elif [[ $option == 9 || $option == 09 ]]; then
-		theHarvester -d $target -l $result -b crtsh -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b crtsh -f $filename
 		break
 	elif [[ $option == 10 ]]; then
-		theHarvester -d $target -l $result -b dnsdumpster -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b dnsdumpster -f $filename
 		break
 	elif [[ $option == 11 ]]; then
-		theHarvester -d $target -l $result -b duckduckgo -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b duckduckgo -f $filename
 		break
 	elif [[ $option == 12 ]]; then
-		theHarvester -d $target -l $result -b fullhunt -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b fullhunt -f $filename
 		break
 	elif [[ $option == 13 ]]; then
-		theHarvester -d $target -l $result -b github-code -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b github-code -f $filename
 		break
 	elif [[ $option == 14 ]]; then
-		theHarvester -d $target -l $result -b google -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b google -f $filename
 		break
 	elif [[ $option == 15 ]]; then              
-		theHarvester -d $target -l $result -b hackertarget -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b hackertarget -f $filename
 		break
 	elif [[ $option == 16 ]]; then              
-		theHarvester -d $target -l $result -b hunter -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b hunter -f $filename
 		break
 	elif [[ $option == 17 ]]; then              
-		theHarvester -d $target -l $result -b intelx -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b intelx -f $filename
 		break
 	elif [[ $option == 18 ]]; then              
-		theHarvester -d $target -l $result -b linkedin -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b linkedin -f $filename
 		break
 	elif [[ $option == 19 ]]; then              
-		theHarvester -d $target -l $result -b linkedin_links -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b linkedin_links -f $filename
 		break
 	elif [[ $option == 20 ]]; then              
-		theHarvester -d $target -l $result -b n45ht -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b n45ht -f $filename
 		break
 	elif [[ $option == 21 ]]; then              
-		theHarvester -d $target -l $result -b omnisint -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b omnisint -f $filename
 		break
 	elif [[ $option == 22 ]]; then              
-		theHarvester -d $target -l $result -b otx -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b otx -f $filename
 		break
 	elif [[ $option == 23 ]]; then              
-		theHarvester -d $target -l $result -b pentesttools -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b pentesttools -f $filename
 		break
 	elif [[ $option == 24 ]]; then              
-		theHarvester -d $target -l $result -b projectdiscovery -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b projectdiscovery -f $filename
 		break
 	elif [[ $option == 25 ]]; then              
-		theHarvester -d $target -l $result -b qwant -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b qwant -f $filename
 		break
 	elif [[ $option == 26 ]]; then              
-		theHarvester -d $target -l $result -b rapiddns -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b rapiddns -f $filename
 		break
 	elif [[ $option == 27 ]]; then              
-		theHarvester -d $target -l $result -b rocketreach -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b rocketreach -f $filename
 		break
 	elif [[ $option == 28 ]]; then              
-		theHarvester -d $target -l $result -b securityTrails -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b securityTrails -f $filename
 		break
 	elif [[ $option == 29 ]]; then              
-		theHarvester -d $target -l $result -b spyse -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b spyse -f $filename
 		break
 	elif [[ $option == 30 ]]; then              
-		theHarvester -d $target -l $result -b sublist3r -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b sublist3r -f $filename
 		break
 	elif [[ $option == 31 ]]; then              
-		theHarvester -d $target -l $result -b threatcrowd -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b threatcrowd -f $filename
 		break
 	elif [[ $option == 32 ]]; then              
-		theHarvester -d $target -l $result -b threatminer -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b threatminer -f $filename
 		break
 	elif [[ $option == 33 ]]; then              
-		theHarvester -d $target -l $result -b trello -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b trello -f $filename
 		break
 	elif [[ $option == 34 ]]; then              
-		theHarvester -d $target -l $result -b twitter -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b twitter -f $filename
 		break
 	elif [[ $option == 35 ]]; then              
-		theHarvester -d $target -l $result -b urlscan -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b urlscan -f $filename
 		break
 	elif [[ $option == 36 ]]; then              
-		theHarvester -d $target -l $result -b virustotal -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b virustotal -f $filename
 		break
 	elif [[ $option == 37 ]]; then              
-		theHarvester -d $target -l $result -b yahoo -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)
+		theHarvester -d $target -l $result -b yahoo -f $filename
 		break
 	elif [[ $option == 38 ]]; then
-		theHarvester -d $target -l $result -b zoomeye -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)	
+		theHarvester -d $target -l $result -b zoomeye -f $filename	
 		break
 	elif [[ $option == 39 ]]; then
-		theHarvester -d $target -l $result -b all -f "theHarvester_"$target"_"$(date +%F)"_"$(date +%T)	
+		theHarvester -d $target -l $result -b all -f $filename	
 		break
 	else
 		echo -e "${LYELLOW}/!\ Option invalide !${RESTORE}"
