@@ -854,6 +854,7 @@ echo -e "${LRED}(Q)${RESTORE} Quitter\n\n"
 read -p $'\e[0;31m[*]\e[0m Choisisssez une option:' option
 while [[ TRUE ]]; do
 	if [[ $option == 1 ]]; then
+		echo ""
 		echo -e "${LRED}[*]${RESTORE}Vérifie si votre mot de passe à déjà été compromis suite à une violations de donnée sur un site web. (Utilise la base de donnée du site haveibeenpwned.com)\n"
 		read -p $'\e[0;31m[*]\e[0m Indiquer le mot de passe à vérifier : ' password
 		mysha="$(echo -n $password | sha1sum | awk '{print toupper($1)}')"
@@ -861,9 +862,11 @@ while [[ TRUE ]]; do
 		suffix=${mysha:5}
 		result="$(curl -s https://api.pwnedpasswords.com/range/$prefix | grep $suffix)"
 		if [ $? -ne 0 ]; then
+			echo ""
 			echo -e "${LGREEN}[v]${RESTORE} Mot de passe non trouvé sur api.pwnedpasswords.com"
 		else
 			appearance=`echo -n ${result} | cut -f2 -d: | sed -e 's/\r//'`
+			echo ""
 			echo -e "${LRED}[!]${RESTORE} Mot de passe trouvé ${LRED} $appearance ${RESTORE} fois. ${LRED} Ne l'utilisez pas !${RESTORE}\n"
 		fi
 		echo -e "\n"
